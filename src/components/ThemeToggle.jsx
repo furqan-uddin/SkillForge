@@ -1,4 +1,4 @@
-//src/components/ThemeToggle.jsx
+//SKILLFORGE/src/components/ThemeToggle.jsx
 import { useContext } from "react";
 import { ThemeContext } from "../contexts/ThemeContext";
 import { Moon, Sun } from "lucide-react";
