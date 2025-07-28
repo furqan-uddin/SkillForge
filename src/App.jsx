@@ -1,19 +1,28 @@
 // SKILLFORGE/src/App.jsx
+// React & Hooks
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// UI & Notifications
+import toast, { Toaster } from "react-hot-toast";
+
+// Utils & Helpers
 import { isTokenExpired, logoutUser } from "./utils/authHelper";
+
+// Components
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Pages
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
-import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import CareerForm from "./pages/CareerForm";
 import AIRoadmap from "./pages/AIRoadmap";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Profile from "./pages/Profile";
-import { useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
 
 function App() {
   useEffect(() => {

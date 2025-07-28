@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Brain, FileText, TrendingUp, Sparkles } from "lucide-react";
-
+import illustration from "../assets/img.png"
 const Home = () => {
   const navigate = useNavigate();
 
@@ -48,7 +48,7 @@ const Home = () => {
           className="flex-1 mt-10 md:mt-0 flex justify-center"
         >
           <img
-            src="https://undraw.co/api/illustrations/fe8eeaa3-0b46-45f3-8663-e54e3fb8c056"
+            src={illustration}
             alt="Career Illustration"
             className="w-full max-w-md drop-shadow-lg rounded-lg"
           />

@@ -1,7 +1,14 @@
 // SKILLFORGE/src/components/Navbar.jsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
-import { Menu, X, User, ChevronDown, LogOut, LayoutDashboard } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  ChevronDown,
+  LogOut,
+  LayoutDashboard,
+} from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
 const Navbar = () => {
@@ -16,7 +23,6 @@ const Navbar = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) setUser(JSON.parse(storedUser));
 
-    // ✅ Close dropdown when clicking outside
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
@@ -42,15 +48,15 @@ const Navbar = () => {
 
   return (
     <nav className="flex items-center justify-between px-6 py-4 bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50">
-      {/* ✅ Brand Logo */}
+      {/* Brand */}
       <div
-        className="text-2xl font-bold text-blue-600 cursor-pointer hover:text-blue-700 transition"
         onClick={() => navigate("/")}
+        className="text-2xl font-bold text-blue-600 cursor-pointer hover:text-blue-700 transition"
       >
         SkillForge
       </div>
 
-      {/* ✅ Desktop Menu */}
+      {/* Desktop Menu */}
       <div className="hidden md:flex items-center space-x-6">
         <Link to="/" className={navLinkClass("/")}>Home</Link>
 
@@ -76,16 +82,20 @@ const Navbar = () => {
         )}
       </div>
 
-      {/* ✅ Right-side: User Dropdown + Theme */}
-      <div className="flex items-center space-x-4">
+      {/* Right-side: Dropdown + Theme + Mobile Toggle */}
+      <div className="flex items-center gap-4">
         {user && (
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-1 bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+              className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition"
+              aria-haspopup="true"
+              aria-expanded={dropdownOpen}
             >
               <User className="w-4 h-4 text-gray-700 dark:text-white" />
-              <span className="text-gray-700 dark:text-gray-200 font-medium">{user.name}</span>
+              <span className="text-sm text-gray-700 dark:text-gray-200 font-medium">
+                {user.name}
+              </span>
               <ChevronDown
                 className={`w-4 h-4 text-gray-500 transition-transform ${
                   dropdownOpen ? "rotate-180" : "rotate-0"
@@ -93,24 +103,23 @@ const Navbar = () => {
               />
             </button>
 
-            {/* ✅ Dropdown Menu */}
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 z-50 animate-fade-in">
                 <button
                   onClick={() => navigate("/profile")}
-                  className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
+                  className="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
                 >
                   <User size={16} /> Profile
                 </button>
                 <button
                   onClick={() => navigate("/dashboard")}
-                  className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
+                  className="w-full flex items-center gap-2 px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200"
                 >
                   <LayoutDashboard size={16} /> Dashboard
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-gray-700"
+                  className="w-full flex items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-gray-700"
                 >
                   <LogOut size={16} /> Logout
                 </button>
@@ -120,6 +129,8 @@ const Navbar = () => {
         )}
 
         <ThemeToggle />
+
+        {/* Mobile Toggle */}
         <button className="md:hidden" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? (
             <X className="text-black dark:text-white" />
@@ -129,9 +140,9 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* ✅ Mobile Menu */}
+      {/* Mobile Menu */}
       {isOpen && (
-        <div className="absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-md md:hidden flex flex-col space-y-4 p-4">
+        <div className="absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-md md:hidden flex flex-col space-y-4 p-4 z-40">
           <Link to="/" className={navLinkClass("/")}>Home</Link>
 
           {user && (
@@ -147,7 +158,7 @@ const Navbar = () => {
               </Link>
               <button
                 onClick={handleLogout}
-                className="hover:text-red-500 transition text-left dark:text-white"
+                className="text-left text-red-600 dark:text-red-400 hover:text-red-500 transition"
               >
                 Logout
               </button>

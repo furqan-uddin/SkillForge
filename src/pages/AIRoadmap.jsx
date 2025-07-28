@@ -39,45 +39,36 @@ const AIRoadmap = () => {
 
   // ✅ Generate roadmaps (SINGLE API CALL now)
   const generateRoadmaps = async () => {
-    if (interests.length === 0) {
-      toast.error("No interests found. Please add interests first.");
+  if (interests.length === 0) {
+    toast.error("No interests found. Please add interests first.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      toast.error("Session expired. Please log in again.");
+      logoutUser(navigate);
       return;
     }
 
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      if (!token || isTokenExpired(token)) {
-        toast.error("Session expired. Please log in again.");
-        logoutUser(navigate);
-        return;
-      }
+    const res = await axios.post(
+      "http://localhost:5000/api/generate-roadmap",
+      { interests },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-      const res = await axios.post(
-        "http://localhost:5000/api/generate-roadmap",
-        { interests },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    setRoadmaps(res.data.roadmaps); // ✅ Directly use returned structured data
+    toast.success("✅ Roadmaps generated successfully!");
+  } catch (error) {
+    console.error("Error generating roadmaps:", error);
+    toast.error("❌ Failed to generate roadmaps");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      const roadmapText = res.data.roadmap;
-      const roadmapChunks = roadmapText.split(/(?=## )/g); // Split by headings if formatted
-
-      const newRoadmaps = {};
-      interests.forEach((interest, idx) => {
-        newRoadmaps[interest] =
-          roadmapChunks[idx]?.split("\n").filter((line) => line.trim() !== "") ||
-          [`${interest}: No detailed roadmap found`];
-      });
-
-      setRoadmaps(newRoadmaps);
-      toast.success("✅ Roadmaps generated successfully!");
-    } catch (error) {
-      console.error("Error generating roadmaps:", error);
-      toast.error("❌ Failed to generate roadmaps");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex justify-center py-10 px-4">
@@ -147,38 +138,39 @@ const AIRoadmap = () => {
 
             {/* ✅ Separate Roadmaps for Each Interest */}
             {Object.keys(roadmaps).length > 0 && (
-              <div className="space-y-6">
-                {Object.entries(roadmaps).map(([interest, steps], idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="bg-gray-50 dark:bg-gray-700 p-5 rounded-lg shadow-md"
-                  >
-                    <h3 className="font-semibold text-lg mb-4 text-blue-600 dark:text-blue-400">
-                      {interest} Roadmap:
-                    </h3>
-                    <div className="relative pl-4 border-l-2 border-blue-400">
-                      {steps.map((step, stepIndex) => (
-                        <motion.div
-                          key={stepIndex}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: stepIndex * 0.03 }}
-                          className="mb-3 flex items-start gap-3"
-                        >
-                          <CheckCircle className="text-green-500 w-5 h-5 mt-1" />
-                          <p className="text-gray-800 dark:text-gray-200 text-sm leading-snug">
-                            {step}
-                          </p>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ))}
+  <div className="space-y-10">
+    {Object.entries(roadmaps).map(([interest, steps], idx) => (
+      <div
+        key={idx}
+        className="bg-gradient-to-br from-blue-50 dark:from-gray-800 to-white dark:to-gray-900 p-6 rounded-xl shadow-lg border dark:border-gray-700"
+      >
+        <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4">
+          {interest} Roadmap
+        </h3>
+        <div className="relative pl-6">
+          <div className="absolute left-2 top-0 bottom-0 w-1 bg-blue-400 rounded-full"></div>
+          {steps.map((step, stepIndex) => (
+            <motion.div
+              key={stepIndex}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: stepIndex * 0.03 }}
+              className="relative mb-6"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-4 h-4 mt-1 rounded-full bg-green-500 border-2 border-white dark:border-gray-900 shadow-md"></div>
+                <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
+                  {step}
+                </p>
               </div>
-            )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
           </>
         )}
       </div>

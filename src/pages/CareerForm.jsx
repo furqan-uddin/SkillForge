@@ -1,9 +1,8 @@
 // ✅ SKILLFORGE/src/pages/CareerForm.jsx
-
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Plus, X, Loader2 } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { isTokenExpired, logoutUser } from "../utils/authHelper";
 
@@ -41,7 +40,7 @@ const CareerForm = () => {
     if (interest.length < 3) return false;
     if (/^[0-9]+$/.test(interest)) return false;
     if (bannedWords.includes(interest.toLowerCase())) return false;
-    if (!/^[a-zA-Z\s\-\&]+$/.test(interest)) return false;
+    if (!/^[a-zA-Z\s\-\/\&]+$/.test(interest)) return false; // ✅ Now supports / and &
     return true;
   };
 
@@ -77,6 +76,18 @@ const CareerForm = () => {
   const hasUnsavedChanges =
     JSON.stringify(selectedInterests) !== JSON.stringify(originalInterests);
 
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () =>
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
   const toggleInterest = (interest) => {
     setSelectedInterests((prev) =>
       prev.includes(interest)
@@ -95,7 +106,7 @@ const CareerForm = () => {
       return;
     }
 
-    const normalized = trimmed.replace(/\s+/g, " ");
+    const normalized = trimmed.replace(/\s+/g, " ").replace(/\//g, "&"); // ✅ Convert / to &
     if (
       selectedInterests.some(
         (i) => i.toLowerCase() === normalized.toLowerCase()
@@ -126,7 +137,9 @@ const CareerForm = () => {
 
       const normalized = [
         ...new Set(
-          selectedInterests.map((i) => i.trim().replace(/\s+/g, " "))
+          selectedInterests.map((i) =>
+            i.trim().replace(/\s+/g, " ").replace(/\//g, "&") // ✅ Normalize before saving
+          )
         ),
       ];
 
@@ -150,9 +163,8 @@ const CareerForm = () => {
 
   if (loadingInterests) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-gray-700 dark:text-gray-300">
-        <Loader2 className="animate-spin mb-2" size={30} />
-        <p className="text-sm">Loading your interests...</p>
+      <div className="min-h-screen flex items-center justify-center text-gray-600 dark:text-gray-300">
+        Loading your interests...
       </div>
     );
   }
@@ -161,11 +173,12 @@ const CareerForm = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex justify-center py-10 px-4">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="max-w-xl w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-        <h1 className="text-3xl font-extrabold mb-3 text-center text-blue-600 dark:text-blue-400">
+        <h1 className="text-3xl font-extrabold mb-4 text-center text-blue-600 dark:text-blue-400">
           🎯 Career Interests
         </h1>
-        <p className="text-gray-600 dark:text-gray-300 text-center mb-6 text-sm">
-          Select from popular options or add your own meaningful interests.
+        <p className="text-gray-600 dark:text-gray-300 text-center mb-6">
+          Select from popular options or add your own <strong>valid</strong>{" "}
+          interests.
         </p>
 
         {/* Predefined Interests */}
@@ -174,9 +187,9 @@ const CareerForm = () => {
             <button
               key={index}
               onClick={() => toggleInterest(interest)}
-              className={`px-4 py-2 rounded-full text-sm font-medium shadow-sm transform transition-all duration-200 ${
+              className={`px-4 py-2 rounded-full text-sm font-medium shadow-md transform transition-all ${
                 selectedInterests.includes(interest)
-                  ? "bg-blue-600 text-white shadow-md scale-105"
+                  ? "bg-blue-600 text-white shadow-blue-300 scale-105"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-600"
               }`}
             >
@@ -186,7 +199,7 @@ const CareerForm = () => {
         </div>
 
         {/* Add Custom Interest */}
-        <div className="flex items-center gap-2 mb-5">
+        <div className="flex items-center gap-2 mb-4">
           <input
             type="text"
             value={customInterest}
@@ -208,7 +221,7 @@ const CareerForm = () => {
             {selectedInterests.map((interest, index) => (
               <div
                 key={index}
-                className="flex items-center gap-1 bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-gray-200 px-3 py-1 rounded-full text-sm shadow-sm"
+                className="flex items-center gap-1 bg-blue-100 dark:bg-gray-700 text-blue-700 dark:text-gray-200 px-3 py-1 rounded-full text-sm shadow"
               >
                 {interest}
                 <button
@@ -226,13 +239,12 @@ const CareerForm = () => {
         <button
           onClick={handleSubmit}
           disabled={!hasUnsavedChanges || loading}
-          className={`w-full py-2 rounded-lg transition mb-3 flex items-center justify-center gap-2 ${
+          className={`w-full py-2 rounded-lg transition mb-3 ${
             hasUnsavedChanges
               ? "bg-blue-600 text-white hover:bg-blue-700"
               : "bg-gray-400 text-gray-200 cursor-not-allowed"
           }`}
         >
-          {loading && <Loader2 size={18} className="animate-spin" />}
           {loading ? "Saving..." : "Save Interests"}
         </button>
 
