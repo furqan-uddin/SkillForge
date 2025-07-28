@@ -1,5 +1,6 @@
 // SKILLFORGE/src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { isTokenExpired, logoutUser } from "./utils/authHelper";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -11,11 +12,21 @@ import CareerForm from "./pages/CareerForm";
 import AIRoadmap from "./pages/AIRoadmap";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Profile from "./pages/Profile";
-
+import { useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 function App() {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && isTokenExpired(token)) {
+      toast.error("Session expired. Please log in again.");
+      logoutUser(); // ✅ Now logoutUser will directly redirect without useNavigate
+    }
+  }, []);
+
   return (
     <Router>
+      <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
