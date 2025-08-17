@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { Loader2, RefreshCw, CheckCircle, ArrowLeft } from "lucide-react";
+import { Loader2, RefreshCw, ArrowLeft } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { isTokenExpired, logoutUser } from "../utils/authHelper";
+import WeekAccordion from "../components/WeekAccordion"; // ✅ Import accordion component
 
 const AIRoadmap = () => {
   const [interests, setInterests] = useState([]);
@@ -25,9 +26,12 @@ const AIRoadmap = () => {
           return;
         }
 
-        const res = await axios.get("http://localhost:5000/api/auth/get-interests", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "http://localhost:5000/api/auth/get-interests",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setInterests(res.data.interests || []);
       } catch (error) {
         console.error("Error fetching interests:", error);
@@ -37,38 +41,37 @@ const AIRoadmap = () => {
     fetchInterests();
   }, [navigate]);
 
-  // ✅ Generate roadmaps (SINGLE API CALL now)
+  // ✅ Generate roadmaps
   const generateRoadmaps = async () => {
-  if (interests.length === 0) {
-    toast.error("No interests found. Please add interests first.");
-    return;
-  }
-
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
-    if (!token || isTokenExpired(token)) {
-      toast.error("Session expired. Please log in again.");
-      logoutUser(navigate);
+    if (interests.length === 0) {
+      toast.error("No interests found. Please add interests first.");
       return;
     }
 
-    const res = await axios.post(
-      "http://localhost:5000/api/generate-roadmap",
-      { interests },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      if (!token || isTokenExpired(token)) {
+        toast.error("Session expired. Please log in again.");
+        logoutUser(navigate);
+        return;
+      }
 
-    setRoadmaps(res.data.roadmaps); // ✅ Directly use returned structured data
-    toast.success("✅ Roadmaps generated successfully!");
-  } catch (error) {
-    console.error("Error generating roadmaps:", error);
-    toast.error("❌ Failed to generate roadmaps");
-  } finally {
-    setLoading(false);
-  }
-};
+      const res = await axios.post(
+        "http://localhost:5000/api/generate-roadmap",
+        { interests },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
+      setRoadmaps(res.data.roadmaps);
+      toast.success("✅ Roadmaps generated successfully!");
+    } catch (error) {
+      console.error("Error generating roadmaps:", error);
+      toast.error("❌ Failed to generate roadmaps");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex justify-center py-10 px-4">
@@ -136,41 +139,31 @@ const AIRoadmap = () => {
               )}
             </button>
 
-            {/* ✅ Separate Roadmaps for Each Interest */}
+            {/* ✅ Roadmaps Accordion Style */}
             {Object.keys(roadmaps).length > 0 && (
-  <div className="space-y-10">
-    {Object.entries(roadmaps).map(([interest, steps], idx) => (
-      <div
-        key={idx}
-        className="bg-gradient-to-br from-blue-50 dark:from-gray-800 to-white dark:to-gray-900 p-6 rounded-xl shadow-lg border dark:border-gray-700"
-      >
-        <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-4">
-          {interest} Roadmap
-        </h3>
-        <div className="relative pl-6">
-          <div className="absolute left-2 top-0 bottom-0 w-1 bg-blue-400 rounded-full"></div>
-          {steps.map((step, stepIndex) => (
-            <motion.div
-              key={stepIndex}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: stepIndex * 0.03 }}
-              className="relative mb-6"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-4 h-4 mt-1 rounded-full bg-green-500 border-2 border-white dark:border-gray-900 shadow-md"></div>
-                <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed">
-                  {step}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    ))}
-  </div>
-)}
+              <div className="space-y-10">
+                {Object.entries(roadmaps).map(([interest, weeks], idx) => (
+                  <div
+                    key={idx}
+                    className="bg-gradient-to-br from-blue-50 dark:from-gray-800 to-white dark:to-gray-900 p-6 rounded-xl shadow-lg border dark:border-gray-700"
+                  >
+                    <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-6">
+                      {interest} Roadmap
+                    </h3>
 
+                    <div className="space-y-4">
+                      {Object.entries(weeks).map(([week, steps], weekIdx) => (
+                        <WeekAccordion
+                          key={weekIdx}
+                          week={week}
+                          steps={steps}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
