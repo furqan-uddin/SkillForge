@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { motion } from "framer-motion";
 import { Loader2, RefreshCw, ArrowLeft } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { isTokenExpired, logoutUser } from "../utils/authHelper";
 import WeekAccordion from "../components/WeekAccordion"; // ✅ Import accordion component
+import API from "../utils/axiosInstance";
 
 const AIRoadmap = () => {
   const [interests, setInterests] = useState([]);
@@ -26,12 +25,7 @@ const AIRoadmap = () => {
           return;
         }
 
-        const res = await axios.get(
-          "http://localhost:5000/api/auth/get-interests",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await API.get("/auth/get-interests");
         setInterests(res.data.interests || []);
       } catch (error) {
         console.error("Error fetching interests:", error);
@@ -57,11 +51,7 @@ const AIRoadmap = () => {
         return;
       }
 
-      const res = await axios.post(
-        "http://localhost:5000/api/generate-roadmap",
-        { interests },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await API.post("/generate-roadmap",{ interests });
 
       setRoadmaps(res.data.roadmaps);
       toast.success("✅ Roadmaps generated successfully!");

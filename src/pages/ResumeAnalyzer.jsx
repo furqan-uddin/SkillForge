@@ -1,6 +1,5 @@
 // SKILLFORGE/src/pages/ResumeAnalyzer.jsx
 import { useState } from "react";
-import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
 import {
@@ -11,6 +10,7 @@ import {
   Lightbulb,
   XCircle,
 } from "lucide-react";
+import API from "../utils/axiosInstance";
 
 const ResumeAnalyzer = () => {
   const [resumeText, setResumeText] = useState("");
@@ -93,16 +93,11 @@ const formatSuggestions = (rawText) => {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("userId", userId);
-        res = await axios.post(
-          "http://localhost:5000/api/analyze-resume",
-          formData,
+        res = await API.post("/analyze-resume",formData,
           { headers: { "Content-Type": "multipart/form-data" } }
         );
       } else {
-        res = await axios.post("http://localhost:5000/api/analyze-resume", {
-          text: resumeText,
-          userId,
-        });
+        res = await API.post("/analyze-resume", {text: resumeText,userId,});
       }
 
       if (!res.data.suggestions || res.data.suggestions.length === 0) {

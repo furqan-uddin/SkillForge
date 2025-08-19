@@ -1,10 +1,10 @@
 // ✅ SKILLFORGE/src/pages/CareerForm.jsx
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Plus, X } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { isTokenExpired, logoutUser } from "../utils/authHelper";
+import API from "../utils/axiosInstance";
 
 const CareerForm = () => {
   const [selectedInterests, setSelectedInterests] = useState([]);
@@ -57,10 +57,7 @@ const CareerForm = () => {
           return;
         }
 
-        const { data } = await axios.get(
-          "http://localhost:5000/api/auth/get-interests",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const { data } = await API.get("/auth/get-interests");
         setSelectedInterests(data.interests || []);
         setOriginalInterests(data.interests || []);
       } catch {
@@ -143,11 +140,7 @@ const CareerForm = () => {
         ),
       ];
 
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/save-interests",
-        { interests: normalized },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await API.post("/auth/save-interests",{ interests: normalized });
 
       toast.success("✅ Interests saved successfully!");
       setOriginalInterests(res.data.interests);

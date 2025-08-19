@@ -1,10 +1,9 @@
 // SKILLFORGE/src/pages/Dashboard.jsx
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { motion } from "framer-motion";
 import { FileText, TrendingUp, List, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import API from "../utils/axiosInstance";
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState({
     resumeScore: 0,
@@ -18,9 +17,7 @@ const Dashboard = () => {
     const fetchDashboard = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/dashboard", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await API.get("/dashboard");
         setDashboard(res.data);
       } catch (error) {
         console.error("Error fetching dashboard:", error);

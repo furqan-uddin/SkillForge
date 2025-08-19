@@ -1,9 +1,9 @@
 // SKILLFORGE/src/pages/Register.jsx
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
+import API from "../utils/axiosInstance";
 
 const Register = () => {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -47,7 +47,7 @@ const Register = () => {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/auth/register", formData);
+      await API.post("/auth/register", formData);
       toast.success("Registration successful! Please login.");
       navigate("/login");
     } catch (error) {

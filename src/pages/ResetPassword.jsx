@@ -1,9 +1,9 @@
 //SKILLFORGE/src/pages/ResetPassword.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { Eye, EyeOff } from "lucide-react";
+import API from "../utils/axiosInstance";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -42,10 +42,7 @@ const ResetPassword = () => {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/api/auth/reset-password", {
-        email,
-        newPassword: password,
-      });
+      await API.post("/auth/reset-password", { email, newPassword: password, });
       toast.success("Password reset successfully! Please login.");
       navigate("/login");
     } catch (error) {

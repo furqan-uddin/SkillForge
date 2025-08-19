@@ -1,9 +1,11 @@
 // SKILLFORGE/src/pages/Login.jsx
+// src/pages/Login.jsx
 import { useState } from "react";
-import axios from "axios";
+import API from "../utils/axiosInstance"; // use centralized API (same base URL)
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
+import { loginUser } from "../utils/authHelper";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -11,9 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -31,16 +31,16 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/api/auth/login", formData);
+      const res = await API.post("/auth/login", formData);
 
-      // ✅ Save user & token in localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // Use loginUser helper to store & broadcast change
+      loginUser({ token: res.data.token, user: res.data.user });
 
       toast.success("Login successful!");
       navigate("/dashboard");
-      window.location.reload();
+      // ❌ no reload here
     } catch (error) {
+      console.error("Login error:", error);
       toast.error(error.response?.data?.message || "Login failed! Try again.");
     } finally {
       setLoading(false);

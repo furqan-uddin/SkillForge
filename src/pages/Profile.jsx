@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import API from "../utils/axiosInstance";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -17,9 +18,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/profile/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await API.get("/profile/me");
 
         setUser(res.data);
         setName(res.data.name);
@@ -62,10 +61,8 @@ const Profile = () => {
 
       const uploadedPicUrl = await handleImageUpload();
 
-      const res = await axios.put(
-        "http://localhost:5000/api/profile/update",
-        { name, profilePic: uploadedPicUrl },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await API.put("/profile/update",
+        { name, profilePic: uploadedPicUrl }
       );
 
       setUser(res.data.user);
