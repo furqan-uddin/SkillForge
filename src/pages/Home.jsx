@@ -26,7 +26,7 @@ const Home = () => {
           </p>
           <div className="flex flex-col md:flex-row items-center gap-4 justify-center md:justify-start">
             <button
-              onClick={() => navigate("/career-form")}
+              onClick={() => navigate("/login")}
               className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition shadow-md"
             >
               🚀 Get Started
@@ -115,7 +115,7 @@ const Home = () => {
           Ready to Supercharge Your Career?
         </h2>
         <button
-          onClick={() => navigate("/career-form")}
+          onClick={() => navigate("/register")}
           className="px-6 py-3 bg-white text-blue-600 rounded-lg font-semibold hover:bg-gray-100 transition"
         >
           Start Now – It’s Free!

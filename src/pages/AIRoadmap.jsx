@@ -1,160 +1,205 @@
-// ✅ SKILLFORGE/src/pages/AIRoadmap.jsx
-
-import { useEffect, useState } from "react";
+// SKILLFORGE/src/pages/AIRoadmap.jsx
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, RefreshCw, ArrowLeft } from "lucide-react";
+import { Loader2, RefreshCw, Save, Brain } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import { isTokenExpired, logoutUser } from "../utils/authHelper";
-import WeekAccordion from "../components/WeekAccordion"; // ✅ Import accordion component
+import WeekAccordion from "../components/WeekAccordion";
 import API from "../utils/axiosInstance";
 
 const AIRoadmap = () => {
-  const [interests, setInterests] = useState([]);
-  const [roadmaps, setRoadmaps] = useState({});
+  const [interestInput, setInterestInput] = useState("");
+  const [generatedInterest, setGeneratedInterest] = useState("");
+  const [weeks, setWeeks] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ Fetch saved interests
-  useEffect(() => {
-    const fetchInterests = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token || isTokenExpired(token)) {
-          toast.error("Session expired. Please log in again.");
-          logoutUser(navigate);
-          return;
-        }
+  const ensureAuth = () => {
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      toast.error("⚠️ Session expired. Please log in again.");
+      logoutUser(navigate);
+      return false;
+    }
+    return true;
+  };
 
-        const res = await API.get("/auth/get-interests");
-        setInterests(res.data.interests || []);
-      } catch (error) {
-        console.error("Error fetching interests:", error);
-        toast.error("❌ Failed to fetch interests");
-      }
-    };
-    fetchInterests();
-  }, [navigate]);
-
-  // ✅ Generate roadmaps
-  const generateRoadmaps = async () => {
-    if (interests.length === 0) {
-      toast.error("No interests found. Please add interests first.");
+  const generate = async ({ force = false } = {}) => {
+    const interest = (interestInput || generatedInterest || "").trim();
+    if (!interest) {
+      toast.error("❌ Please enter an interest to generate a roadmap.");
       return;
     }
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      if (!token || isTokenExpired(token)) {
-        toast.error("Session expired. Please log in again.");
-        logoutUser(navigate);
+      if (!ensureAuth()) return;
+
+      const { data } = await API.post("/generate-roadmap", { interests: [interest] });
+      const roadmap = data?.roadmaps?.[interest];
+
+      if (!roadmap || Object.keys(roadmap).length === 0) {
+        toast.error("❌ Could not generate roadmap. Try a different interest.");
         return;
       }
 
-      const res = await API.post("/generate-roadmap",{ interests });
+      setGeneratedInterest(interest);
+      setWeeks(roadmap);
 
-      setRoadmaps(res.data.roadmaps);
-      toast.success("✅ Roadmaps generated successfully!");
-    } catch (error) {
-      console.error("Error generating roadmaps:", error);
-      toast.error("❌ Failed to generate roadmaps");
+      toast.success(force ? "🔄 Roadmap regenerated successfully!" : "✅ Roadmap generated!");
+      if (force) setInterestInput("");
+    } catch (err) {
+      console.error("generate error:", err);
+      toast.error("❌ Failed to generate roadmap. Try again!");
     } finally {
       setLoading(false);
     }
   };
 
+  const saveRoadmap = async () => {
+    if (!generatedInterest || !weeks) {
+      toast.error("⚠️ Nothing to save yet.");
+      return;
+    }
+    try {
+      setLoading(true);
+      if (!ensureAuth()) return;
+
+      await API.post("/roadmaps", {
+        interest: generatedInterest,
+        weeks,
+      });
+
+      toast.success("💾 Roadmap saved to your account!");
+      setInterestInput("");
+    } catch (err) {
+      console.error("save error:", err);
+      toast.error("❌ Failed to save roadmap.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmRegenerate = () => {
+    const interest = (interestInput || generatedInterest || "").trim();
+    if (!interest) {
+      toast.error("⚠️ Please enter an interest first.");
+      return;
+    }
+
+    toast(
+      (t) => (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm">
+            Regenerating <b>{interest}</b> will reset your progress for this roadmap.
+          </p>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                await generate({ force: true });
+                await saveRoadmap();
+              }}
+              className="px-3 py-1 rounded-lg bg-red-600 hover:bg-red-700 text-white"
+            >
+              Regenerate
+            </button>
+          </div>
+        </div>
+      ),
+      { duration: 6000 }
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex justify-center py-10 px-4">
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="max-w-3xl w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+
+      <div className="max-w-3xl w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={() => navigate("/career-form")}
-            className="flex items-center gap-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition"
-          >
-            <ArrowLeft size={18} /> Back
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400">
-            🤖 AI Learning Roadmap
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+            <Brain className="w-7 h-7" />
+            AI Learning Roadmap
           </h1>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="text-sm px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            Dashboard
+          </button>
         </div>
 
-        {/* ✅ No Interests Saved */}
-        {interests.length === 0 ? (
-          <div className="text-center py-6">
-            <p className="text-gray-600 dark:text-gray-300 mb-3 text-sm sm:text-base">
-              You haven't added any interests yet.
-            </p>
+        {/* Input card */}
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-5 mb-6 shadow-inner">
+          <label className="block text-sm font-medium mb-2">Enter an interest</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={interestInput}
+              onChange={(e) => setInterestInput(e.target.value)}
+              placeholder="e.g., Web Development"
+              className="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
             <button
-              onClick={() => navigate("/career-form")}
-              className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
+              onClick={() => generate()}
+              disabled={loading}
+              className="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center gap-2 transition"
             >
-              Go to Career Form
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+              {loading ? "Generating..." : "Generate"}
             </button>
           </div>
-        ) : (
-          <>
-            {/* ✅ Interests Display */}
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold mb-2">Your Interests:</h2>
-              <div className="flex flex-wrap gap-2">
-                {interests.map((interest, index) => (
-                  <span
-                    key={index}
-                    className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-3 py-1 rounded-full text-sm shadow-sm"
-                  >
-                    {interest}
-                  </span>
-                ))}
-              </div>
-            </div>
+          {generatedInterest && (
+            <p className="text-xs mt-3 text-gray-600 dark:text-gray-300">
+              Showing roadmap for: <b>{generatedInterest}</b>
+            </p>
+          )}
+        </div>
 
-            {/* ✅ Generate Button */}
+        {/* Action buttons */}
+        {weeks && (
+          <div className="flex flex-wrap gap-3 mb-6 justify-center">
             <button
-              onClick={generateRoadmaps}
+              onClick={saveRoadmap}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white py-2 rounded-lg hover:from-blue-600 hover:to-blue-800 transition shadow-md mb-6"
+              className="px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex items-center gap-2 transition"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin w-5 h-5" /> Generating...
-                </>
-              ) : Object.keys(roadmaps).length > 0 ? (
-                <>
-                  <RefreshCw className="w-5 h-5" /> Regenerate Roadmaps
-                </>
-              ) : (
-                "Generate Roadmaps"
-              )}
+              <Save className="w-4 h-4" />
+              Save Roadmap
             </button>
+            <button
+              onClick={confirmRegenerate}
+              disabled={loading}
+              className="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex items-center gap-2 transition"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Regenerate
+            </button>
+          </div>
+        )}
 
-            {/* ✅ Roadmaps Accordion Style */}
-            {Object.keys(roadmaps).length > 0 && (
-              <div className="space-y-10">
-                {Object.entries(roadmaps).map(([interest, weeks], idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gradient-to-br from-blue-50 dark:from-gray-800 to-white dark:to-gray-900 p-6 rounded-xl shadow-lg border dark:border-gray-700"
-                  >
-                    <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-6">
-                      {interest} Roadmap
-                    </h3>
-
-                    <div className="space-y-4">
-                      {Object.entries(weeks).map(([week, steps], weekIdx) => (
-                        <WeekAccordion
-                          key={weekIdx}
-                          week={week}
-                          steps={steps}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
+        {/* Roadmap content */}
+        {weeks ? (
+          <div className="space-y-4">
+            {Object.entries(weeks).map(([week, steps], idx) => (
+              <WeekAccordion
+                key={idx}
+                week={week}
+                steps={Array.isArray(steps) ? steps : []}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-8">
+            ✨ Generate a roadmap to see weekly learning steps here.
+          </div>
         )}
       </div>
     </div>

@@ -77,7 +77,7 @@ const Navbar = () => {
 
         {user && (
           <>
-            <Link to="/career-form" className={navLinkClass("/career-form")}>Career Form</Link>
+            <Link to="/my-roadmaps" className={navLinkClass("/my-roadmaps")}>My Roadmaps</Link>
             <Link to="/ai-roadmap" className={navLinkClass("/ai-roadmap")}>AI Roadmap</Link>
             <Link to="/resume-analyzer" className={navLinkClass("/resume-analyzer")}>Resume Analyzer</Link>
           </>
@@ -137,7 +137,7 @@ const Navbar = () => {
 
           {user && (
             <>
-              <Link to="/career-form" className={navLinkClass("/career-form")}>Career Form</Link>
+              <Link to="/my-roadmaps" className={navLinkClass("/my-roadmaps")}>My Roadmaps</Link>
               <Link to="/ai-roadmap" className={navLinkClass("/ai-roadmap")}>AI Roadmap</Link>
               <Link to="/resume-analyzer" className={navLinkClass("/resume-analyzer")}>Resume Analyzer</Link>
               <button onClick={() => { handleLogout(); setIsOpen(false); }} className="text-left text-red-600 dark:text-red-400 hover:text-red-500 transition">Logout</button>

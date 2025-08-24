@@ -19,10 +19,11 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
-import CareerForm from "./pages/CareerForm";
+import MyRoadmaps from "./pages/MyRoadmaps";
 import AIRoadmap from "./pages/AIRoadmap";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Profile from "./pages/Profile";
+import RoadmapDetail from "./pages/RoadmapDetail";
 
 function App() {
   useEffect(() => {
@@ -51,18 +52,26 @@ function App() {
           }
         />
         <Route
-          path="/career-form"
-          element={
-            <ProtectedRoute>
-              <CareerForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/ai-roadmap"
           element={
             <ProtectedRoute>
               <AIRoadmap />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-roadmaps"
+          element={
+            <ProtectedRoute>
+              <MyRoadmaps />
+            </ProtectedRoute>
+          }
+        />
+        <Route 
+          path="/roadmap/:roadmapId" 
+          element={
+            <ProtectedRoute>
+              <RoadmapDetail />
             </ProtectedRoute>
           }
         />
