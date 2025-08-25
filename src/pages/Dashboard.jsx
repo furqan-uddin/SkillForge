@@ -44,7 +44,7 @@ const Dashboard = () => {
         </h1>
 
         {/* ✅ Grid Layout */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-3 gap-6">
           {/* ✅ Resume Score */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col items-center">
             <FileText className="text-blue-500 w-8 h-8 mb-3" />
@@ -132,6 +132,23 @@ const Dashboard = () => {
               Completed so far
             </p>
           </div>
+          {/* ✅ Learning Streaks */}
+<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col items-center">
+  <TrendingUp className="text-red-500 w-8 h-8 mb-3" />
+  <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
+    Learning Streak
+  </h2>
+  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+    {dashboard.currentStreak} 🔥
+  </p>
+  <p className="text-sm text-gray-600 dark:text-gray-400">
+    Current Streak (days)
+  </p>
+  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+    Longest: {dashboard.longestStreak} days
+  </p>
+</div>
+ 
         </div>
 
         {/* ✅ Career Interests */}
@@ -179,7 +196,7 @@ const Dashboard = () => {
               <TrendingUp size={16} /> View AI Roadmap
             </button>
             <button
-              onClick={() => navigate("/career-form")}
+              onClick={() => navigate("/ai-roadmap")}
               className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
             >
               <List size={16} /> Update Interests
