@@ -2,6 +2,7 @@
 // src/utils/axiosInstance.js
 import axios from "axios";
 import { isTokenExpired } from "./authHelper";
+import { toast } from "react-hot-toast";
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
@@ -22,6 +23,7 @@ API.interceptors.response.use(
   (err) => {
     const status = err?.response?.status;
     if (status === 401) {
+      toast.error("Session expired. Please log in again.");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       // redirect to login

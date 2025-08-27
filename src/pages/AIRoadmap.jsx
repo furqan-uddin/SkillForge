@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, RefreshCw, Save, Brain } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
-import { isTokenExpired, logoutUser } from "../utils/authHelper";
 import WeekAccordion from "../components/WeekAccordion";
 import API from "../utils/axiosInstance";
 
@@ -14,16 +13,6 @@ const AIRoadmap = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const ensureAuth = () => {
-    const token = localStorage.getItem("token");
-    if (!token || isTokenExpired(token)) {
-      toast.error("⚠️ Session expired. Please log in again.");
-      logoutUser(navigate);
-      return false;
-    }
-    return true;
-  };
-
   const generate = async ({ force = false } = {}) => {
     const interest = (interestInput || generatedInterest || "").trim();
     if (!interest) {
@@ -33,8 +22,6 @@ const AIRoadmap = () => {
 
     try {
       setLoading(true);
-      if (!ensureAuth()) return;
-
       const { data } = await API.post("/generate-roadmap", { interests: [interest] });
       const roadmap = data?.roadmaps?.[interest];
 
@@ -63,8 +50,6 @@ const AIRoadmap = () => {
     }
     try {
       setLoading(true);
-      if (!ensureAuth()) return;
-
       await API.post("/roadmaps", {
         interest: generatedInterest,
         weeks,

@@ -1,14 +1,18 @@
-// SKILLFORGE/src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, TrendingUp, List, RefreshCw } from "lucide-react";
+import { FileText, TrendingUp, Flame, List } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../utils/axiosInstance";
+
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState({
     resumeScore: 0,
     roadmapProgress: 0,
     interests: [],
+    currentStreak: 0,
+    longestStreak: 0,
   });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -16,7 +20,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const token = localStorage.getItem("token");
         const res = await API.get("/dashboard");
         setDashboard(res.data);
       } catch (error) {
@@ -38,126 +41,46 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white py-10 px-6">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-blue-600 dark:text-blue-400 mb-8">
-          My Career Dashboard
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-3xl font-bold text-center text-blue-600 dark:text-blue-400 mb-10">
+          My Career Hub
         </h1>
 
-        {/* ✅ Grid Layout */}
+        {/* ✅ Stats Grid */}
         <div className="grid md:grid-cols-3 gap-6">
-          {/* ✅ Resume Score */}
+          {/* Resume Score */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col items-center">
-            <FileText className="text-blue-500 w-8 h-8 mb-3" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-              Resume Score
-            </h2>
-            <div className="relative w-24 h-24">
-              <svg className="w-24 h-24 transform -rotate-90">
-                <circle
-                  cx="48"
-                  cy="48"
-                  r="40"
-                  stroke="currentColor"
-                  className="text-gray-300 dark:text-gray-700"
-                  strokeWidth="6"
-                  fill="transparent"
-                />
-                <motion.circle
-                  cx="48"
-                  cy="48"
-                  r="40"
-                  stroke="currentColor"
-                  className="text-green-500"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  fill="transparent"
-                  strokeDasharray={2 * Math.PI * 40}
-                  strokeDashoffset={2 * Math.PI * 40}
-                  animate={{
-                    strokeDashoffset:
-                      (2 * Math.PI * 40 * (100 - dashboard.resumeScore)) / 100,
-                  }}
-                  transition={{ duration: 1 }}
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-700 dark:text-gray-200">
-                {dashboard.resumeScore}%
-              </div>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Optimized for ATS
-            </p>
+            <FileText className="text-green-500 w-8 h-8 mb-3" />
+            <h2 className="text-lg font-semibold mb-2">Resume Score</h2>
+            <p className="text-2xl font-bold">{dashboard.resumeScore}%</p>
+            <p className="text-sm text-gray-500 mt-1">ATS Optimized</p>
           </div>
 
-          {/* ✅ AI Roadmap Progress */}
+          {/* Roadmap Progress */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col items-center">
-            <TrendingUp className="text-purple-500 w-8 h-8 mb-3" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-              AI Roadmap Progress
-            </h2>
-            <div className="relative w-24 h-24">
-              <svg className="w-24 h-24 transform -rotate-90">
-                <circle
-                  cx="48"
-                  cy="48"
-                  r="40"
-                  stroke="currentColor"
-                  className="text-gray-300 dark:text-gray-700"
-                  strokeWidth="6"
-                  fill="transparent"
-                />
-                <motion.circle
-                  cx="48"
-                  cy="48"
-                  r="40"
-                  stroke="currentColor"
-                  className="text-blue-500"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  fill="transparent"
-                  strokeDasharray={2 * Math.PI * 40}
-                  strokeDashoffset={2 * Math.PI * 40}
-                  animate={{
-                    strokeDashoffset:
-                      (2 * Math.PI * 40 * (100 - dashboard.roadmapProgress)) / 100,
-                  }}
-                  transition={{ duration: 1 }}
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center text-lg font-bold text-gray-700 dark:text-gray-200">
-                {dashboard.roadmapProgress}%
-              </div>
-            </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-              Completed so far
+            <TrendingUp className="text-blue-500 w-8 h-8 mb-3" />
+            <h2 className="text-lg font-semibold mb-2">Roadmap Progress</h2>
+            <p className="text-2xl font-bold">{dashboard.roadmapProgress}%</p>
+            <p className="text-sm text-gray-500 mt-1">Completed so far</p>
+          </div>
+
+          {/* Learning Streak */}
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col items-center">
+            <Flame className="text-red-500 w-8 h-8 mb-3" />
+            <h2 className="text-lg font-semibold mb-2">Learning Streak</h2>
+            <p className="text-2xl font-bold">{dashboard.currentStreak} 🔥</p>
+            <p className="text-sm text-gray-500">Current streak (days)</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Longest: {dashboard.longestStreak} days
             </p>
           </div>
-          {/* ✅ Learning Streaks */}
-<div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 flex flex-col items-center">
-  <TrendingUp className="text-red-500 w-8 h-8 mb-3" />
-  <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-    Learning Streak
-  </h2>
-  <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-    {dashboard.currentStreak} 🔥
-  </p>
-  <p className="text-sm text-gray-600 dark:text-gray-400">
-    Current Streak (days)
-  </p>
-  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-    Longest: {dashboard.longestStreak} days
-  </p>
-</div>
- 
         </div>
 
         {/* ✅ Career Interests */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 mt-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 mt-8">
           <div className="flex items-center gap-2 mb-4">
             <List className="text-yellow-500 w-5 h-5" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-              Your Career Interests
-            </h2>
+            <h2 className="text-lg font-semibold">Your Career Interests</h2>
           </div>
           <div className="flex flex-wrap gap-2">
             {dashboard.interests.length > 0 ? (
@@ -170,37 +93,76 @@ const Dashboard = () => {
                 </span>
               ))
             ) : (
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                No interests saved yet.
-              </p>
+              <p className="text-gray-500 text-sm">No interests saved yet.</p>
             )}
           </div>
         </div>
 
-        {/* ✅ Quick Actions */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 mt-6">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
-            Quick Actions
+        {/* ✅ Preparation Tools */}
+        <div className="mt-10">
+          <h2 className="text-2xl font-semibold mb-6 text-center">
+            Preparation Tools
           </h2>
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => navigate("/resume-analyzer")}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-            >
-              <RefreshCw size={16} /> Re-analyze Resume
-            </button>
-            <button
-              onClick={() => navigate("/ai-roadmap")}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
-              <TrendingUp size={16} /> View AI Roadmap
-            </button>
-            <button
-              onClick={() => navigate("/ai-roadmap")}
-              className="flex items-center gap-2 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
-            >
-              <List size={16} /> Update Interests
-            </button>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* JD Matcher */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              <h3 className="text-xl font-semibold mb-2">JD Matcher</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Match your resume against job descriptions and identify missing
+                skills.
+              </p>
+              <button
+                onClick={() => navigate("/jd-matcher")}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg"
+              >
+                Open Tool
+              </button>
+            </div>
+
+            {/* Interview Prep */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              <h3 className="text-xl font-semibold mb-2">Interview Prep</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Practice AI-generated interview questions tailored to your
+                career path.
+              </p>
+              <button
+                onClick={() => navigate("/interview-prep")}
+                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg"
+              >
+                Open Tool
+              </button>
+            </div>
+
+            {/* Skill Gap Analyzer */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              <h3 className="text-xl font-semibold mb-2">Skill Gap Analyzer</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Compare your skills with market demand and get learning
+                suggestions.
+              </p>
+              <button
+                onClick={() => navigate("/skill-gap")}
+                className="px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-lg"
+              >
+                Open Tool
+              </button>
+            </div>
+
+            {/* Career Insights */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6">
+              <h3 className="text-xl font-semibold mb-2">Career Insights</h3>
+              <p className="text-sm text-gray-500 mb-4">
+                Explore AI-powered career paths, salaries, and growth
+                opportunities.
+              </p>
+              <button
+                onClick={() => navigate("/career-insights")}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+              >
+                Open Tool
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -209,4 +171,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

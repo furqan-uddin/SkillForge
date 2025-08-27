@@ -24,6 +24,12 @@ import AIRoadmap from "./pages/AIRoadmap";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Profile from "./pages/Profile";
 import RoadmapDetail from "./pages/RoadmapDetail";
+// ...existing imports
+import JDMatcher from "./pages/JDMatcher";
+import InterviewPrep from "./pages/InterviewPrep";
+import SkillGap from "./pages/SkillGap";
+import CareerInsights from "./pages/CareerInsights";
+
 
 function App() {
   useEffect(() => {
@@ -43,6 +49,12 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        {/* New feature routes (protected) */}
+<Route path="/jd-matcher" element={<ProtectedRoute><JDMatcher /></ProtectedRoute>} />
+<Route path="/interview-prep" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
+<Route path="/skill-gap" element={<ProtectedRoute><SkillGap /></ProtectedRoute>} />
+<Route path="/career-insights" element={<ProtectedRoute><CareerInsights /></ProtectedRoute>} />
+
         <Route
           path="/dashboard"
           element={

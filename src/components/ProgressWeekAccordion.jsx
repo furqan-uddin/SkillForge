@@ -1,3 +1,4 @@
+// SKILLFORGE/src/components/ProgressWeekAccordion.jsx
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp, CheckSquare, Square } from "lucide-react";

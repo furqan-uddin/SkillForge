@@ -14,12 +14,7 @@ const ProtectedRoute = ({ children }) => {
         <p className="text-center max-w-md text-gray-700 dark:text-gray-300 mb-6">
           You must be logged in to access this page. Please log in to continue.
         </p>
-        <a
-          href="/login"
-          className="inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
-        >
-          Go to Login
-        </a>
+        <Navigate to="/login" replace />
       </div>
     );
   }
