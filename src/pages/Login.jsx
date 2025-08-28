@@ -1,17 +1,18 @@
 // SKILLFORGE/src/pages/Login.jsx
-// src/pages/Login.jsx
 import { useState } from "react";
-import API from "../utils/axiosInstance"; // use centralized API (same base URL)
+import API from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
-import { loginUser } from "../utils/authHelper";
+import { useAuth } from "../contexts/AuthContext"; // Import the useAuth hook
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  // Get the login function from the AuthContext
+  const { login } = useAuth();
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -33,12 +34,11 @@ const Login = () => {
       setLoading(true);
       const res = await API.post("/auth/login", formData);
 
-      // Use loginUser helper to store & broadcast change
-      loginUser({ token: res.data.token, user: res.data.user });
+      // Use the login function from AuthContext to store user data
+      login(res.data.user, res.data.token);
 
       toast.success("Login successful!");
       navigate("/dashboard");
-      // ❌ no reload here
     } catch (error) {
       console.error("Login error:", error);
       toast.error(error.response?.data?.message || "Login failed! Try again.");

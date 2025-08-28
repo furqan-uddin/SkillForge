@@ -1,10 +1,20 @@
-// SKILLFORGE/src/pages/Profile.jsx
+// src/pages/Profile.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Camera, Save, Lock, Plus, X, Award } from "lucide-react";
+import {
+  Loader2,
+  Camera,
+  Save,
+  Lock,
+  Plus,
+  X,
+  Award,
+  User,
+} from "lucide-react";
 import API from "../utils/axiosInstance";
+import { motion } from "framer-motion";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -107,15 +117,20 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white py-10 px-4 flex justify-center">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-white py-12 px-6 flex justify-center">
       <Toaster position="top-center" />
-      <div className="max-w-2xl w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 space-y-8">
-        <h1 className="text-3xl font-bold text-center text-blue-600 dark:text-blue-400">
+      <div className="max-w-3xl w-full space-y-10">
+        {/* Header */}
+        <motion.h1
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600 dark:from-blue-400 dark:to-indigo-400"
+        >
           My Profile
-        </h1>
+        </motion.h1>
 
         {/* Profile Section */}
-        <div className="flex flex-col items-center gap-4">
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 flex flex-col items-center gap-6 border border-gray-200/40 dark:border-gray-700/40">
           <div className="relative group">
             <img
               src={
@@ -125,9 +140,10 @@ const Profile = () => {
                     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
               }
               alt="Profile"
-              className="w-28 h-28 rounded-full border-4 border-blue-500 object-cover shadow-md"
+              className="w-32 h-32 rounded-full border-4 border-blue-500 object-cover shadow-lg"
             />
-            <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full text-white cursor-pointer hover:bg-blue-700 transition">
+            {/* Hover Overlay */}
+            <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full text-white cursor-pointer hover:bg-blue-700 transition opacity-90 group-hover:opacity-100">
               <Camera size={16} />
               <input
                 type="file"
@@ -142,22 +158,23 @@ const Profile = () => {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-center text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full text-center p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <p className="text-gray-600 dark:text-gray-300">{user.email}</p>
+          <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
         </div>
 
-        {/* Interests */}
-        <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700 shadow-inner">
-          <h2 className="text-lg font-semibold mb-3 text-purple-600">
-            Career Interests
+        {/* Career Interests */}
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 border border-gray-200/40 dark:border-gray-700/40">
+          <h2 className="text-xl font-semibold flex items-center gap-2 text-purple-600 mb-4">
+            <User className="w-5 h-5" /> Career Interests
           </h2>
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="flex flex-wrap gap-3 mb-4">
             {interests.length > 0 ? (
               interests.map((interest, idx) => (
-                <span
+                <motion.span
                   key={idx}
-                  className="px-3 py-1 bg-blue-100 dark:bg-blue-600 text-blue-700 dark:text-white rounded-full text-sm flex items-center gap-2"
+                  whileHover={{ scale: 1.1 }}
+                  className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-blue-100 text-blue-700 dark:from-indigo-600 dark:to-blue-600 dark:text-white rounded-full text-sm shadow-md flex items-center gap-2"
                 >
                   {interest}
                   <button
@@ -166,10 +183,12 @@ const Profile = () => {
                   >
                     <X size={14} />
                   </button>
-                </span>
+                </motion.span>
               ))
             ) : (
-              <p className="text-gray-500 text-sm">No interests added yet.</p>
+              <p className="text-gray-500 text-sm italic">
+                No interests added yet. Start building your learning journey!
+              </p>
             )}
           </div>
           <div className="flex gap-2">
@@ -178,52 +197,58 @@ const Profile = () => {
               value={newInterest}
               onChange={(e) => setNewInterest(e.target.value)}
               placeholder="Add new interest..."
-              className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800"
+              className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900"
             />
             <button
               onClick={handleAddInterest}
-              className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-1"
             >
               <Plus size={16} /> Add
             </button>
           </div>
         </div>
 
-        {/* Badges */}
-        <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700 shadow-inner">
-          <h2 className="text-lg font-semibold mb-3 text-yellow-600">
-            Achievements
+        {/* Achievements */}
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 border border-gray-200/40 dark:border-gray-700/40">
+          <h2 className="text-xl font-semibold flex items-center gap-2 text-yellow-600 mb-4">
+            <Award className="w-5 h-5" /> Achievements
           </h2>
           {user.badges?.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               {user.badges.map((badge, idx) => (
                 <span
                   key={idx}
-                  className="flex items-center gap-1 px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-600 text-yellow-700 dark:text-white text-sm shadow"
+                  className="flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 dark:bg-yellow-600 text-yellow-700 dark:text-white text-sm shadow"
                 >
                   <Award size={14} /> {badge}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 text-sm">No badges earned yet.</p>
+            <p className="text-gray-500 text-sm italic">
+              No badges earned yet. Keep progressing to unlock achievements! 🌟
+            </p>
           )}
         </div>
 
         {/* Actions */}
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col sm:flex-row gap-4">
           <button
             onClick={handleUpdate}
             disabled={loading}
-            className="flex items-center justify-center gap-2 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-60"
+            className="flex items-center justify-center gap-2 w-full sm:w-1/2 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-60"
           >
-            {loading ? <Loader2 className="animate-spin w-4 h-4" /> : <Save size={18} />}
+            {loading ? (
+              <Loader2 className="animate-spin w-4 h-4" />
+            ) : (
+              <Save size={18} />
+            )}
             {loading ? "Saving..." : "Save Changes"}
           </button>
 
           <button
             onClick={() => navigate("/reset-password")}
-            className="flex items-center justify-center gap-2 w-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            className="flex items-center justify-center gap-2 w-full sm:w-1/2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
             <Lock size={18} /> Change Password
           </button>

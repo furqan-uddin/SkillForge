@@ -1,10 +1,10 @@
-// SKILLFORGE/src/pages/AIRoadmap.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, RefreshCw, Save, Brain } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import WeekAccordion from "../components/WeekAccordion";
 import API from "../utils/axiosInstance";
+import { motion } from "framer-motion";
 
 const AIRoadmap = () => {
   const [interestInput, setInterestInput] = useState("");
@@ -102,26 +102,31 @@ const AIRoadmap = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white flex justify-center py-8 sm:py-10 px-3 sm:px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-black text-gray-900 dark:text-white flex justify-center py-10 px-4 transition-all duration-300">
       <Toaster position="top-center" reverseOrder={false} />
 
-      <div className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 sm:p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6"
+      >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 sm:mb-8">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-blue-600 dark:text-blue-400 flex items-center gap-2">
-            <Brain className="w-6 h-6 sm:w-7 sm:h-7" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+            <Brain className="w-7 h-7" />
             AI Learning Roadmap
           </h1>
           <button
             onClick={() => navigate("/dashboard")}
-            className="text-xs sm:text-sm px-3 py-1 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition self-start sm:self-auto"
+            className="text-sm px-3 py-1.5 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
-            Dashboard
+            ← Dashboard
           </button>
         </div>
 
         {/* Input card */}
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 sm:p-5 mb-6 shadow-inner">
+        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-5 mb-6 shadow-inner">
           <label className="block text-sm font-medium mb-2">Enter an interest</label>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
@@ -129,19 +134,19 @@ const AIRoadmap = () => {
               value={interestInput}
               onChange={(e) => setInterestInput(e.target.value)}
               placeholder="e.g., Web Development"
-              className="flex-1 p-2.5 sm:p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <button
               onClick={() => generate()}
               disabled={loading}
-              className="px-4 sm:px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center justify-center gap-2 transition text-sm sm:text-base"
+              className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium flex items-center justify-center gap-2 transition text-sm sm:text-base shadow"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               {loading ? "Generating..." : "Generate"}
             </button>
           </div>
           {generatedInterest && (
-            <p className="text-xs sm:text-sm mt-3 text-gray-600 dark:text-gray-300">
+            <p className="text-sm mt-3 text-gray-600 dark:text-gray-300">
               Showing roadmap for: <b>{generatedInterest}</b>
             </p>
           )}
@@ -153,7 +158,7 @@ const AIRoadmap = () => {
             <button
               onClick={saveRoadmap}
               disabled={loading}
-              className="flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex items-center justify-center gap-2 transition text-sm sm:text-base"
+              className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium flex items-center justify-center gap-2 transition text-sm sm:text-base shadow"
             >
               <Save className="w-4 h-4" />
               Save Roadmap
@@ -161,7 +166,7 @@ const AIRoadmap = () => {
             <button
               onClick={confirmRegenerate}
               disabled={loading}
-              className="flex-1 sm:flex-none px-4 sm:px-5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex items-center justify-center gap-2 transition text-sm sm:text-base"
+              className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium flex items-center justify-center gap-2 transition text-sm sm:text-base shadow"
             >
               <RefreshCw className="w-4 h-4" />
               Regenerate
@@ -171,7 +176,12 @@ const AIRoadmap = () => {
 
         {/* Roadmap content */}
         {weeks ? (
-          <div className="space-y-3 sm:space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="space-y-4"
+          >
             {Object.entries(weeks).map(([week, steps], idx) => (
               <WeekAccordion
                 key={idx}
@@ -179,13 +189,13 @@ const AIRoadmap = () => {
                 steps={Array.isArray(steps) ? steps : []}
               />
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <div className="text-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 py-8">
+          <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-10">
             ✨ Generate a roadmap to see weekly learning steps here.
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

@@ -1,21 +1,26 @@
 // SKILLFORGE/src/components/ProtectedRoute.jsx
-import { Navigate } from "react-router-dom";
-import { isTokenExpired } from "../utils/authHelper";
+// import { Navigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useAuth } from "../contexts/AuthContext"; // Import the custom hook
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const { isAuthenticated } = useAuth(); // Get the authentication status from the context
 
-  if (!token || isTokenExpired(token)) {
+  if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-10">
-        <h2 className="text-3xl font-semibold text-red-600 dark:text-red-400 mb-2">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white px-4 py-10"
+      >
+        <h2 className="text-3xl font-bold text-red-600 dark:text-red-400 mb-2">
           🔒 Access Denied
         </h2>
-        <p className="text-center max-w-md text-gray-700 dark:text-gray-300 mb-6">
+        <p className="text-center max-w-md text-gray-600 dark:text-gray-300 mb-6">
           You must be logged in to access this page. Please log in to continue.
         </p>
-        <Navigate to="/login" replace />
-      </div>
+        {/* <Navigate to="/login" replace /> */}
+      </motion.div>
     );
   }
 

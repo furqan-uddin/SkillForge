@@ -17,7 +17,6 @@ const JDMatcher = () => {
       toast.error("Please paste the job description.");
       return;
     }
-
     try {
       setLoading(true);
       setResult(null);
@@ -25,11 +24,8 @@ const JDMatcher = () => {
       setResult(data);
       setNoResume(false);
     } catch (err) {
-      if (err.response?.data?.message?.includes("No resume")) {
-        setNoResume(true);
-      } else {
-        toast.error(err.response?.data?.message || "Failed to match JD. Try again.");
-      }
+      if (err.response?.data?.message?.includes("No resume")) setNoResume(true);
+      else toast.error(err.response?.data?.message || "Failed to match JD. Try again.");
     } finally {
       setLoading(false);
     }
@@ -37,7 +33,9 @@ const JDMatcher = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white py-8 px-4">
+      <Toaster position="top-center" />
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+
         {/* Back Button */}
         <button
           onClick={() => navigate("/dashboard")}
@@ -52,8 +50,8 @@ const JDMatcher = () => {
         </div>
 
         {noResume ? (
-          <div className="text-center py-8">
-            <p className="text-red-500 mb-4">No resume found. Please upload your resume first.</p>
+          <div className="text-center py-8 bg-red-50 dark:bg-red-900 rounded-lg">
+            <p className="text-red-600 dark:text-red-300 mb-4 font-semibold">No resume found. Please upload your resume first.</p>
             <button
               onClick={() => navigate("/resume-analyzer")}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
@@ -107,22 +105,22 @@ const JDMatcher = () => {
             </div>
 
             <div>
-              <div className="text-sm mb-2">Missing Keywords</div>
+              <div className="text-sm mb-2 font-semibold">Missing Keywords</div>
               <div className="flex flex-wrap gap-2">
                 {(result.missingKeywords || []).length > 0 ? (
                   result.missingKeywords.map((k, i) => (
-                    <span key={i} className="px-3 py-1 bg-red-100 dark:bg-red-600 text-red-700 dark:text-white rounded-full text-sm">
+                    <span key={i} className="px-3 py-1 bg-red-100 dark:bg-red-600 text-red-700 dark:text-white rounded-full text-sm shadow-sm">
                       <Tag className="inline mr-1" /> {k}
                     </span>
                   ))
                 ) : (
-                  <div>No missing keywords — great match!</div>
+                  <div className="text-gray-500 dark:text-gray-300">No missing keywords — great match!</div>
                 )}
               </div>
             </div>
 
             <div>
-              <div className="text-sm mb-2">Suggestions</div>
+              <div className="text-sm mb-2 font-semibold">Suggestions</div>
               <ul className="list-disc list-inside space-y-1 text-gray-700 dark:text-gray-200">
                 {(result.suggestions || []).map((s, i) => <li key={i}>{s}</li>)}
               </ul>

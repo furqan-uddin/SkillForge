@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Loader2, MessageCircle, Check } from "lucide-react";
+import { Loader2, MessageCircle, Check, ArrowLeft } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import API from "../utils/axiosInstance";
 
 const InterviewPrep = () => {
@@ -8,6 +9,7 @@ const InterviewPrep = () => {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [prepared, setPrepared] = useState({});
+  const navigate = useNavigate();
 
   const handleGenerate = async (e) => {
     e?.preventDefault();
@@ -22,7 +24,6 @@ const InterviewPrep = () => {
       setQuestions(data.questions || []);
       setPrepared({});
     } catch (err) {
-      console.error("Interview error:", err);
       toast.error(err.response?.data?.message || "Failed to generate questions.");
     } finally {
       setLoading(false);
@@ -35,6 +36,15 @@ const InterviewPrep = () => {
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 text-gray-900 dark:text-white">
       <Toaster position="top-center" />
       <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
+
+        {/* Back Button */}
+        <button
+          onClick={() => navigate("/dashboard")}
+          className="mb-4 flex items-center text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
+        </button>
+
         <div className="flex items-center gap-3 mb-4">
           <MessageCircle className="w-6 h-6 text-blue-500" />
           <h1 className="text-xl font-bold">AI Interview Prep</h1>
@@ -46,7 +56,7 @@ const InterviewPrep = () => {
             value={role}
             onChange={(e) => setRole(e.target.value)}
             placeholder="e.g., Software Engineer - Backend"
-            className="flex-1 p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500"
+            className="flex-1 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
@@ -63,7 +73,7 @@ const InterviewPrep = () => {
         ) : (
           <div className="space-y-3">
             {questions.map((q, i) => (
-              <div key={i} className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg flex items-start justify-between">
+              <div key={i} className="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg flex items-start justify-between hover:shadow-md transition">
                 <div className="flex-1">
                   <div className="text-sm text-gray-700 dark:text-gray-200">{q}</div>
                 </div>
