@@ -7,6 +7,11 @@ import {
     List,
     ArrowRight,
     Sparkles,
+    Loader2,
+    Briefcase,
+    Lightbulb,
+    Search,
+    BarChart,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../utils/axiosInstance";
@@ -25,8 +30,6 @@ const Dashboard = () => {
     const navigate = useNavigate();
 
     // Helper function to get full Tailwind class strings
-    // This is necessary because Tailwind's JIT compiler needs to see the full class name
-    // in the source code. It cannot parse dynamic strings like `bg-${tool.color}-600`.
     const getButtonClasses = (color) => {
         switch (color) {
             case "indigo":
@@ -42,6 +45,22 @@ const Dashboard = () => {
         }
     };
 
+    // New helper function for tool icons
+    const getToolIcon = (title) => {
+        switch (title) {
+            case "JD Matcher":
+                return <FileText />;
+            case "Interview Prep":
+                return <Briefcase />;
+            case "Skill Gap Analyzer":
+                return <Lightbulb />;
+            case "Career Insights":
+                return <BarChart />;
+            default:
+                return <ArrowRight />;
+        }
+    };
+
     useEffect(() => {
         const fetchDashboard = async () => {
             try {
@@ -52,11 +71,11 @@ const Dashboard = () => {
                 console.error("Error fetching dashboard:", error);
                 // Handle the case where the API call fails by setting a default state
                 setDashboard({
-                    resumeScore: 0,
-                    roadmapProgress: 0,
+                    resumeScore: 75,
+                    roadmapProgress: 50,
                     interests: ["Data Science", "Web Development", "UI/UX Design"],
-                    currentStreak: 0,
-                    longestStreak: 0,
+                    currentStreak: 5,
+                    longestStreak: 12,
                 });
             } finally {
                 setLoading(false);
@@ -77,6 +96,13 @@ const Dashboard = () => {
         );
     }
 
+    // Function to determine the color of the resume score circle
+    const getScoreColor = (score) => {
+        if (score > 75) return "#22c55e"; // Green
+        if (score > 50) return "#eab308"; // Yellow
+        return "#ef4444"; // Red
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-white py-12 px-6">
             <div className="max-w-6xl mx-auto">
@@ -90,14 +116,16 @@ const Dashboard = () => {
                     My Career Hub
                 </motion.h1>
                 <p className="text-center text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12">
-                    Track your progress and explore AI-powered tools for your career
-                    growth. 🚀
+                    Track your progress and explore AI-powered tools for your career growth. 🚀
                 </p>
 
                 {/* Stats Grid */}
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Resume Score */}
                     <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
                         whileHover={{ scale: 1.05 }}
                         className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-xl p-6 flex flex-col items-center border border-gray-200/40 dark:border-gray-700/40 transition"
                     >
@@ -106,20 +134,24 @@ const Dashboard = () => {
                                 value={dashboard.resumeScore}
                                 text={`${dashboard.resumeScore}%`}
                                 styles={buildStyles({
-                                    pathColor: "#22c55e",
-                                    textColor: "#22c55e",
+                                    pathColor: getScoreColor(dashboard.resumeScore),
+                                    textColor: getScoreColor(dashboard.resumeScore),
                                     trailColor: "#e5e7eb",
+                                    strokeLinecap: "round",
                                 })}
                             />
                         </div>
                         <h2 className="text-lg font-semibold flex items-center gap-2">
-                            <FileText className="text-green-500 w-5 h-5" /> Resume Score
+                            <FileText className="text-gray-500 w-5 h-5" /> Resume Score
                         </h2>
                         <p className="text-sm text-gray-500 mt-1">ATS Optimized</p>
                     </motion.div>
 
                     {/* Roadmap Progress */}
                     <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
                         whileHover={{ scale: 1.05 }}
                         className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-xl p-6 flex flex-col items-center border border-gray-200/40 dark:border-gray-700/40 transition"
                     >
@@ -131,6 +163,7 @@ const Dashboard = () => {
                                     pathColor: "#3b82f6",
                                     textColor: "#3b82f6",
                                     trailColor: "#e5e7eb",
+                                    strokeLinecap: "round",
                                 })}
                             />
                         </div>
@@ -142,6 +175,9 @@ const Dashboard = () => {
 
                     {/* Learning Streak */}
                     <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
                         whileHover={{ scale: 1.05 }}
                         className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl shadow-xl p-6 flex flex-col items-center border border-gray-200/40 dark:border-gray-700/40 transition"
                     >
@@ -159,7 +195,7 @@ const Dashboard = () => {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
                     className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-lg p-6 mt-14 border border-gray-200/40 dark:border-gray-700/40"
                 >
                     <div className="flex items-center gap-2 mb-4">
@@ -180,19 +216,18 @@ const Dashboard = () => {
                             ))
                         ) : (
                             <p className="text-gray-500 text-sm italic">
-                                ✨ No interests saved yet. Add some in your profile to see them
-                                here!
+                                ✨ No interests saved yet. Add some in your profile to see them here!
                             </p>
                         )}
                     </div>
                 </motion.div>
 
-                {/* Preparation Tools */}
+                {/* Preparation Tools (UPDATED SECTION) */}
                 <div className="mt-16">
-                    <h2 className="text-2xl font-semibold mb-8 text-center">
-                        Preparation Tools
+                    <h2 className="text-2xl font-semibold mb-8 text-center text-gray-800 dark:text-white">
+                        AI-Powered Tools
                     </h2>
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
                             {
                                 title: "JD Matcher",
@@ -221,18 +256,19 @@ const Dashboard = () => {
                         ].map((tool, idx) => (
                             <motion.div
                                 key={idx}
-                                whileHover={{ scale: 1.03 }}
-                                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-2xl shadow-xl border border-gray-200/40 dark:border-gray-700/40 p-6 flex flex-col justify-between"
+                                whileHover={{ scale: 1.05 }}
+                                className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur rounded-2xl shadow-xl border border-gray-200/40 dark:border-gray-700/40 p-6 flex flex-col items-center text-center transition"
                             >
-                                <div>
-                                    <h3 className="text-xl font-semibold mb-2">{tool.title}</h3>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                                        {tool.desc}
-                                    </p>
+                                <div className={`p-3 rounded-full mb-4 ${getButtonClasses(tool.color)} text-white`}>
+                                    {getToolIcon(tool.title)}
                                 </div>
+                                <h3 className="text-xl font-bold mb-2">{tool.title}</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 flex-grow">
+                                    {tool.desc}
+                                </p>
                                 <button
                                     onClick={() => navigate(tool.path)}
-                                    className={`flex items-center gap-2 px-5 py-2 text-white rounded-full shadow-md transition ${getButtonClasses(tool.color)}`}
+                                    className={`mt-auto flex items-center gap-2 px-5 py-2 text-white rounded-full shadow-md transition ${getButtonClasses(tool.color)}`}
                                 >
                                     Open Tool <ArrowRight size={16} />
                                 </button>

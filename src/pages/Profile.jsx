@@ -1,4 +1,3 @@
-// src/pages/Profile.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -14,7 +13,7 @@ import {
   User,
 } from "lucide-react";
 import API from "../utils/axiosInstance";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -97,7 +96,8 @@ const Profile = () => {
     }
   };
 
-  const handleRemoveInterest = async (interest) => {
+  // Function to handle the actual removal
+  const confirmRemoveInterest = async (interest) => {
     try {
       const updated = interests.filter((i) => i !== interest);
       const res = await API.post("/auth/save-interests", { interests: updated });
@@ -105,6 +105,16 @@ const Profile = () => {
       toast.success("❌ Interest removed");
     } catch (err) {
       toast.error("Failed to update interests");
+    }
+  };
+
+  // Function to prompt the user for removal using window.confirm
+  const promptRemoveInterest = (interest) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to remove the interest: "${interest}"?`
+    );
+    if (isConfirmed) {
+      confirmRemoveInterest(interest);
     }
   };
 
@@ -116,9 +126,21 @@ const Profile = () => {
     );
   }
 
+  // Variants for section animations
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut",
+      },
+    },
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-950 text-gray-900 dark:text-white py-12 px-6 flex justify-center">
-      <Toaster position="top-center" />
       <div className="max-w-3xl w-full space-y-10">
         {/* Header */}
         <motion.h1
@@ -129,9 +151,17 @@ const Profile = () => {
           My Profile
         </motion.h1>
 
-        {/* Profile Section */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 flex flex-col items-center gap-6 border border-gray-200/40 dark:border-gray-700/40">
-          <div className="relative group">
+        {/* Profile Section with animation */}
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 flex flex-col items-center gap-6 border border-gray-200/40 dark:border-gray-700/40"
+        >
+          <motion.div
+            className="relative group"
+            whileHover={{ scale: 1.05 }} // Subtle hover animation for the entire profile picture area
+          >
             <img
               src={
                 profileFile
@@ -152,7 +182,7 @@ const Profile = () => {
                 className="hidden"
               />
             </label>
-          </div>
+          </motion.div>
 
           <input
             type="text"
@@ -161,35 +191,45 @@ const Profile = () => {
             className="w-full text-center p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-lg font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <p className="text-gray-600 dark:text-gray-400">{user.email}</p>
-        </div>
+        </motion.div>
 
-        {/* Career Interests */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 border border-gray-200/40 dark:border-gray-700/40">
+        {/* Career Interests with animation */}
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 border border-gray-200/40 dark:border-gray-700/40"
+        >
           <h2 className="text-xl font-semibold flex items-center gap-2 text-purple-600 mb-4">
             <User className="w-5 h-5" /> Career Interests
           </h2>
           <div className="flex flex-wrap gap-3 mb-4">
-            {interests.length > 0 ? (
-              interests.map((interest, idx) => (
-                <motion.span
-                  key={idx}
-                  whileHover={{ scale: 1.1 }}
-                  className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-blue-100 text-blue-700 dark:from-indigo-600 dark:to-blue-600 dark:text-white rounded-full text-sm shadow-md flex items-center gap-2"
-                >
-                  {interest}
-                  <button
-                    onClick={() => handleRemoveInterest(interest)}
-                    className="hover:text-red-500"
+            <AnimatePresence>
+              {interests.length > 0 ? (
+                interests.map((interest, idx) => (
+                  <motion.span
+                    key={idx}
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.8, opacity: 0, transition: { duration: 0.2 } }}
+                    whileHover={{ scale: 1.1 }}
+                    className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-blue-100 text-blue-700 dark:from-indigo-600 dark:to-blue-600 dark:text-white rounded-full text-sm shadow-md flex items-center gap-2"
                   >
-                    <X size={14} />
-                  </button>
-                </motion.span>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm italic">
-                No interests added yet. Start building your learning journey!
-              </p>
-            )}
+                    {interest}
+                    <button
+                      onClick={() => promptRemoveInterest(interest)}
+                      className="hover:text-red-500"
+                    >
+                      <X size={14} />
+                    </button>
+                  </motion.span>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm italic">
+                  No interests added yet. Start building your learning journey!
+                </p>
+              )}
+            </AnimatePresence>
           </div>
           <div className="flex gap-2">
             <input
@@ -206,10 +246,15 @@ const Profile = () => {
               <Plus size={16} /> Add
             </button>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Achievements */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 border border-gray-200/40 dark:border-gray-700/40">
+        {/* Achievements with animation */}
+        <motion.div
+          variants={sectionVariants}
+          initial="hidden"
+          animate="visible"
+          className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl shadow-xl rounded-2xl p-6 border border-gray-200/40 dark:border-gray-700/40"
+        >
           <h2 className="text-xl font-semibold flex items-center gap-2 text-yellow-600 mb-4">
             <Award className="w-5 h-5" /> Achievements
           </h2>
@@ -229,7 +274,7 @@ const Profile = () => {
               No badges earned yet. Keep progressing to unlock achievements! 🌟
             </p>
           )}
-        </div>
+        </motion.div>
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-4">

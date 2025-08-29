@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, RefreshCw, Save, Brain } from "lucide-react";
+import { Loader2, RefreshCw, Save, Brain, Lightbulb } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import WeekAccordion from "../components/WeekAccordion";
 import API from "../utils/axiosInstance";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const AIRoadmap = () => {
   const [interestInput, setInterestInput] = useState("");
@@ -101,9 +101,15 @@ const AIRoadmap = () => {
     );
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent default form submission behavior
+      generate();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-black text-gray-900 dark:text-white flex justify-center py-10 px-4 transition-all duration-300">
-      <Toaster position="top-center" reverseOrder={false} />
 
       <motion.div
         initial={{ opacity: 0, y: 25 }}
@@ -127,12 +133,14 @@ const AIRoadmap = () => {
 
         {/* Input card */}
         <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-5 mb-6 shadow-inner">
-          <label className="block text-sm font-medium mb-2">Enter an interest</label>
+          <label htmlFor="interest-input" className="block text-sm font-medium mb-2">Enter an interest</label>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
+              id="interest-input"
               type="text"
               value={interestInput}
               onChange={(e) => setInterestInput(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="e.g., Web Development"
               className="flex-1 p-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -175,26 +183,40 @@ const AIRoadmap = () => {
         )}
 
         {/* Roadmap content */}
-        {weeks ? (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-4"
-          >
-            {Object.entries(weeks).map(([week, steps], idx) => (
-              <WeekAccordion
-                key={idx}
-                week={week}
-                steps={Array.isArray(steps) ? steps : []}
-              />
-            ))}
-          </motion.div>
-        ) : (
-          <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-10">
-            ✨ Generate a roadmap to see weekly learning steps here.
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {weeks ? (
+            <motion.div
+              key="roadmap"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.4 }}
+              className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 space-y-4 shadow-inner"
+            >
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2 mb-4">
+                <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
+                Your AI-Generated Roadmap
+              </h2>
+              {Object.entries(weeks).map(([week, steps], idx) => (
+                <WeekAccordion
+                  key={idx}
+                  week={week}
+                  steps={Array.isArray(steps) ? steps : []}
+                />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="placeholder"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="text-center text-sm text-gray-500 dark:text-gray-400 py-10"
+            >
+              ✨ Generate a roadmap to see weekly learning steps here.
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </div>
   );
