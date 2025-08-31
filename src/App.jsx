@@ -1,13 +1,11 @@
 // SKILLFORGE/src/App.jsx
 // React & Hooks
-import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // UI & Notifications
 import { Toaster } from "react-hot-toast";
 
-// Contexts
-// Import the new AuthProvider to make the authentication state available globally
+// Context
 import { AuthProvider } from "./contexts/AuthContext";
 
 // Components
@@ -30,33 +28,98 @@ import InterviewPrep from "./pages/InterviewPrep";
 import SkillGap from "./pages/SkillGap";
 import CareerInsights from "./pages/CareerInsights";
 
-
 function App() {
   return (
-    // Wrap the entire application in AuthProvider to make the authentication
-    // state and functions available to all components.
     <AuthProvider>
       <Router>
         <Toaster position="top-center" reverseOrder={false} />
         <Navbar />
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Protected Routes */}
-          <Route path="/jd-matcher" element={<ProtectedRoute><JDMatcher /></ProtectedRoute>} />
-          <Route path="/interview-prep" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
-          <Route path="/skill-gap" element={<ProtectedRoute><SkillGap /></ProtectedRoute>} />
-          <Route path="/career-insights" element={<ProtectedRoute><CareerInsights /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/ai-roadmap" element={<ProtectedRoute><AIRoadmap /></ProtectedRoute>} />
-          <Route path="/my-roadmaps" element={<ProtectedRoute><MyRoadmaps /></ProtectedRoute>} />
-          <Route path="/roadmap/:roadmapId" element={<ProtectedRoute><RoadmapDetail /></ProtectedRoute>} />
-          <Route path="/resume-analyzer" element={<ProtectedRoute><ResumeAnalyzer /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route
+            path="/jd-matcher"
+            element={
+              <ProtectedRoute>
+                <JDMatcher />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/interview-prep"
+            element={
+              <ProtectedRoute>
+                <InterviewPrep />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/skill-gap"
+            element={
+              <ProtectedRoute>
+                <SkillGap />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/career-insights"
+            element={
+              <ProtectedRoute>
+                <CareerInsights />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/ai-roadmap"
+            element={
+              <ProtectedRoute>
+                <AIRoadmap />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-roadmaps"
+            element={
+              <ProtectedRoute>
+                <MyRoadmaps />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/roadmap/:roadmapId"
+            element={
+              <ProtectedRoute>
+                <RoadmapDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume-analyzer"
+            element={
+              <ProtectedRoute>
+                <ResumeAnalyzer />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

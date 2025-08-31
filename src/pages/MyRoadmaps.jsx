@@ -23,7 +23,11 @@ const MyRoadmaps = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this roadmap? This action cannot be undone.")) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this roadmap? This action cannot be undone."
+      )
+    ) {
       try {
         setDeletingId(id);
         await API.delete(`/roadmaps/${id}`);
@@ -101,9 +105,12 @@ const MyRoadmaps = () => {
               className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-gray-800 rounded-3xl shadow-xl border-dashed border-2 border-gray-300 dark:border-gray-700"
             >
               <Map className="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4" />
-              <h3 className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">No roadmaps saved yet</h3>
+              <h3 className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                No roadmaps saved yet
+              </h3>
               <p className="text-gray-500 dark:text-gray-400 max-w-sm">
-                Start your journey by generating a personalized roadmap from the "AI Roadmap" page.
+                Start your journey by generating a personalized roadmap from the
+                "AI Roadmap" page.
               </p>
             </motion.div>
           ) : (

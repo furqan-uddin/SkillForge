@@ -87,7 +87,9 @@ const Profile = () => {
     if (!newInterest.trim()) return;
     try {
       const updated = [...interests, newInterest.trim()];
-      const res = await API.post("/auth/save-interests", { interests: updated });
+      const res = await API.post("/profile/save-interests", {
+        interests: updated,
+      });
       setInterests(res.data.interests);
       setNewInterest("");
       toast.success("✅ Interest added");
@@ -100,7 +102,9 @@ const Profile = () => {
   const confirmRemoveInterest = async (interest) => {
     try {
       const updated = interests.filter((i) => i !== interest);
-      const res = await API.post("/auth/save-interests", { interests: updated });
+      const res = await API.post("/profile/save-interests", {
+        interests: updated,
+      });
       setInterests(res.data.interests);
       toast.success("❌ Interest removed");
     } catch (err) {
@@ -211,7 +215,11 @@ const Profile = () => {
                     key={idx}
                     initial={{ scale: 0.8, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0, transition: { duration: 0.2 } }}
+                    exit={{
+                      scale: 0.8,
+                      opacity: 0,
+                      transition: { duration: 0.2 },
+                    }}
                     whileHover={{ scale: 1.1 }}
                     className="px-3 py-1 bg-gradient-to-r from-indigo-100 to-blue-100 text-blue-700 dark:from-indigo-600 dark:to-blue-600 dark:text-white rounded-full text-sm shadow-md flex items-center gap-2"
                   >

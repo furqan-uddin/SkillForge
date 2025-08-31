@@ -16,7 +16,9 @@ const ProgressWeekAccordion = ({ weeks, roadmapId, onUpdate }) => {
         completed: !step.completed,
       });
       onUpdate(res.data.roadmap);
-      toast.success(!step.completed ? "✅ Marked complete" : "❌ Marked incomplete");
+      toast.success(
+        !step.completed ? "✅ Marked complete" : "❌ Marked incomplete"
+      );
     } catch (err) {
       console.error("Error updating step:", err);
       toast.error("❌ Failed to update step");

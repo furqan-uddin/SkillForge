@@ -59,7 +59,9 @@ const SkillGap = () => {
       if (err.response?.data?.message?.includes("No resume")) {
         setNoResume(true);
       } else {
-        toast.error(err.response?.data?.message || "Failed to analyze skill gap.");
+        toast.error(
+          err.response?.data?.message || "Failed to analyze skill gap."
+        );
       }
     } finally {
       setLoading(false);
@@ -115,7 +117,8 @@ const SkillGap = () => {
                 Skill Gap Analysis
               </h1>
               <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mt-1 max-w-2xl">
-                Identify missing skills to fill the gap between your resume and your career interests.
+                Identify missing skills to fill the gap between your resume and
+                your career interests.
               </p>
             </div>
           </div>
@@ -161,8 +164,9 @@ const SkillGap = () => {
                 className="p-4 bg-gray-50 dark:bg-gray-800 border-x border-b border-gray-200 dark:border-gray-700 rounded-b-lg overflow-hidden"
               >
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  We analyze your uploaded resume and compare it to the interests you
-                  provide to identify missing skills and suggest relevant resources.
+                  We analyze your uploaded resume and compare it to the
+                  interests you provide to identify missing skills and suggest
+                  relevant resources.
                 </p>
               </motion.div>
             )}

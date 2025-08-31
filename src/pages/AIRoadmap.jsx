@@ -22,7 +22,9 @@ const AIRoadmap = () => {
 
     try {
       setLoading(true);
-      const { data } = await API.post("/generate-roadmap", { interests: [interest] });
+      const { data } = await API.post("/generate-roadmap", {
+        interests: [interest],
+      });
       const roadmap = data?.roadmaps?.[interest.toLowerCase()];
 
       if (!roadmap || Object.keys(roadmap).length === 0) {
@@ -33,7 +35,9 @@ const AIRoadmap = () => {
       setGeneratedInterest(interest);
       setWeeks(roadmap);
 
-      toast.success(force ? "🔄 Roadmap regenerated successfully!" : "✅ Roadmap generated!");
+      toast.success(
+        force ? "🔄 Roadmap regenerated successfully!" : "✅ Roadmap generated!"
+      );
       if (force) setInterestInput("");
     } catch (err) {
       console.error("generate error:", err);
@@ -76,7 +80,8 @@ const AIRoadmap = () => {
       (t) => (
         <div className="flex flex-col gap-3">
           <p className="text-sm">
-            Regenerating <b>{interest}</b> will reset your progress for this roadmap.
+            Regenerating <b>{interest}</b> will reset your progress for this
+            roadmap.
           </p>
           <div className="flex gap-2 justify-end">
             <button
@@ -102,15 +107,14 @@ const AIRoadmap = () => {
   };
 
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault(); // Prevent default form submission behavior
+    if (event.key === "Enter") {
+      event.preventDefault(); 
       generate();
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-900 dark:to-black text-gray-900 dark:text-white flex justify-center py-10 px-4 transition-all duration-300">
-
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
@@ -133,7 +137,12 @@ const AIRoadmap = () => {
 
         {/* Input card */}
         <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-5 mb-6 shadow-inner">
-          <label htmlFor="interest-input" className="block text-sm font-medium mb-2">Enter an interest</label>
+          <label
+            htmlFor="interest-input"
+            className="block text-sm font-medium mb-2"
+          >
+            Enter an interest
+          </label>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               id="interest-input"

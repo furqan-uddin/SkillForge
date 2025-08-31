@@ -54,7 +54,9 @@ const RoadmapDetail = () => {
       <div className="flex flex-col items-center justify-center h-screen text-center bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-300">
         <Layers className="w-16 h-16 text-gray-400 mb-4" />
         <p className="text-xl font-semibold mb-2">Roadmap Not Found</p>
-        <p className="text-sm">The requested roadmap could not be loaded. It may have been deleted.</p>
+        <p className="text-sm">
+          The requested roadmap could not be loaded. It may have been deleted.
+        </p>
         <button
           onClick={() => navigate("/my-roadmaps")}
           className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-colors"
@@ -83,13 +85,17 @@ const RoadmapDetail = () => {
 
         {/* Main content card with enhanced shadow and rounded corners */}
         <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl transition-all duration-300">
-          
           {/* Page header with dynamic icon and improved typography */}
           <div className="flex items-center justify-center gap-4 mb-3">
-            <div className="p-3 rounded-full"
-                 style={{
-                   backgroundColor: progress === 100 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-                 }}>
+            <div
+              className="p-3 rounded-full"
+              style={{
+                backgroundColor:
+                  progress === 100
+                    ? "rgba(34, 197, 94, 0.1)"
+                    : "rgba(59, 130, 246, 0.1)",
+              }}
+            >
               {progress === 100 ? (
                 <CheckCircle className="w-8 h-8 text-green-500" />
               ) : (
@@ -110,7 +116,7 @@ const RoadmapDetail = () => {
               className="h-2.5 rounded-full transition-all duration-500 ease-out"
               style={{
                 width: `${progress || 0}%`,
-                backgroundColor: progress === 100 ? '#22c55e' : '#3b82f6',
+                backgroundColor: progress === 100 ? "#22c55e" : "#3b82f6",
               }}
             />
           </div>

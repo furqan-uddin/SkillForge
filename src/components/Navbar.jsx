@@ -1,6 +1,19 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ThemeToggle } from "./ThemeToggle";
-import { Menu, X, User, ChevronDown, LogOut, LayoutDashboard, Compass, BookOpen, FileText } from "lucide-react";
+import {
+  Menu,
+  X,
+  User,
+  ChevronDown,
+  LogOut,
+  LayoutDashboard,
+  Compass,
+  BookOpen,
+  FileText,
+  House,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../contexts/AuthContext";
@@ -39,28 +52,28 @@ const Navbar = () => {
     }`;
 
   const getNavLinks = () => {
-    const commonLinks = [
-      { to: "/", name: "Home", icon: null },
-    ];
+    const commonLinks = [{ to: "/", name: "Home", icon: <House size={16} />  }];
 
     const authLinks = [
       { to: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={16} /> },
+      { to: "/resume-analyzer", name: "Resume Analyzer", icon: <FileText size={16} /> },
       { to: "/ai-roadmap", name: "AI Roadmap", icon: <Compass size={16} /> },
       { to: "/my-roadmaps", name: "My Roadmaps", icon: <BookOpen size={16} /> },
-      { to: "/resume-analyzer", name: "Resume Analyzer", icon: <FileText size={16} /> },
     ];
 
     const guestLinks = [
-      { to: "/login", name: "Login", icon: null },
-      { to: "/register", name: "Register", icon: null },
+      { to: "/login", name: "Login", icon: <LogIn size={16} /> },
+      { to: "/register", name: "Register", icon: <UserPlus size={16} /> },
     ];
 
-    return isAuthenticated ? [...commonLinks, ...authLinks] : [...commonLinks, ...guestLinks];
+    return isAuthenticated
+      ? [...commonLinks, ...authLinks]
+      : [...commonLinks, ...guestLinks];
   };
 
   const navLinks = getNavLinks();
 
-  // New mobile menu close handler
+  // mobile menu close handler
   const handleMobileLinkClick = () => {
     setIsOpen(false);
   };
@@ -137,7 +150,10 @@ const Navbar = () => {
         )}
         <ThemeToggle />
         {/* Mobile Menu Button */}
-        <button className="md:hidden p-2 rounded-md transition-colors hover:bg-gray-200 dark:hover:bg-gray-700" onClick={() => setIsOpen(!isOpen)}>
+        <button
+          className="md:hidden p-2 rounded-md transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+          onClick={() => setIsOpen(!isOpen)}
+        >
           {isOpen ? (
             <X className="text-black dark:text-white" />
           ) : (
@@ -157,23 +173,16 @@ const Navbar = () => {
             className="absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-lg md:hidden flex flex-col space-y-4 p-4 z-40"
           >
             {navLinks.map((link) => (
-              <Link key={link.to} to={link.to} onClick={handleMobileLinkClick} className={navLinkClass(link.to)}>
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={handleMobileLinkClick}
+                className={navLinkClass(link.to)}
+              >
                 {link.icon}
                 <span>{link.name}</span>
               </Link>
             ))}
-            {isAuthenticated && (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  handleMobileLinkClick();
-                }}
-                className="w-full flex items-center gap-2 px-3 py-1 rounded-md text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                <LogOut size={16} />
-                <span>Logout</span>
-              </button>
-            )}
           </motion.div>
         )}
       </AnimatePresence>

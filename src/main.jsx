@@ -10,11 +10,10 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-    <ThemeProvider>
-      <App />
-      <Toaster position="top-center" reverseOrder={false} />
-    </ThemeProvider>
+      <ThemeProvider>
+        <App />
+        <Toaster position="top-center" reverseOrder={false} />
+      </ThemeProvider>
     </AuthProvider>
   </React.StrictMode>
 );
-

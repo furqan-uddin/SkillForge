@@ -308,7 +308,10 @@ const CareerInsights = () => {
                   </div>
                   <ul className="space-y-3 text-sm">
                     {insights.prioritySkills.map((s, idx) => (
-                      <li key={idx} className="text-gray-800 dark:text-gray-200">
+                      <li
+                        key={idx}
+                        className="text-gray-800 dark:text-gray-200"
+                      >
                         {s}
                       </li>
                     ))}
@@ -330,8 +333,10 @@ const CareerInsights = () => {
                 Unlock Your Career Potential
               </h3>
               <p className="mt-3 text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
-                Click the <span className="font-semibold">"Generate My Insights"</span> button above
-                to receive personalized recommendations based on your profile and progress.
+                Click the{" "}
+                <span className="font-semibold">"Generate My Insights"</span>{" "}
+                button above to receive personalized recommendations based on
+                your profile and progress.
               </p>
             </motion.div>
           )}

@@ -39,7 +39,10 @@ const JDMatcher = () => {
       setNoResume(false);
     } catch (err) {
       if (err.response?.data?.message?.includes("No resume")) setNoResume(true);
-      else toast.error(err.response?.data?.message || "Failed to match JD. Try again.");
+      else
+        toast.error(
+          err.response?.data?.message || "Failed to match JD. Try again."
+        );
     } finally {
       setLoading(false);
     }
@@ -116,7 +119,10 @@ const JDMatcher = () => {
               <Info className="w-4 h-4" />
               <span>How JD Match Works</span>
             </div>
-            <motion.div animate={{ rotate: isInfoPanelOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
+            <motion.div
+              animate={{ rotate: isInfoPanelOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
+            >
               <ChevronDown className="w-4 h-4 text-gray-500" />
             </motion.div>
           </div>
@@ -129,9 +135,10 @@ const JDMatcher = () => {
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="p-4 bg-gray-50 dark:bg-gray-800 border-x border-b border-gray-200 dark:border-gray-700 rounded-b-xl text-xs text-gray-600 dark:text-gray-400"
               >
-                We calculate a <b>Match Score</b> by analyzing your uploaded resume
-                against the job description you provide. The score is based on
-                overlapping keywords, required skills, and relevance to the role.
+                We calculate a <b>Match Score</b> by analyzing your uploaded
+                resume against the job description you provide. The score is
+                based on overlapping keywords, required skills, and relevance to
+                the role.
               </motion.div>
             )}
           </AnimatePresence>
@@ -288,7 +295,9 @@ const JDMatcher = () => {
                   {(result.suggestions || []).length > 0 ? (
                     result.suggestions.map((s, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="text-green-500 dark:text-green-400">•</span>
+                        <span className="text-green-500 dark:text-green-400">
+                          •
+                        </span>
                         <span>{s}</span>
                       </li>
                     ))
