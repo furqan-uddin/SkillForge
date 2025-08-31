@@ -23,7 +23,7 @@ const AIRoadmap = () => {
     try {
       setLoading(true);
       const { data } = await API.post("/generate-roadmap", { interests: [interest] });
-      const roadmap = data?.roadmaps?.[interest];
+      const roadmap = data?.roadmaps?.[interest.toLowerCase()];
 
       if (!roadmap || Object.keys(roadmap).length === 0) {
         toast.error("❌ Could not generate roadmap. Try a different interest.");

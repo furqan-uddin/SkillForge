@@ -52,6 +52,10 @@ const CareerInsights = () => {
       };
 
       const { data } = await API.post("/insights", body);
+      if (!data || !Array.isArray(data.roles) || data.roles.length === 0) {
+        toast.error("❌ Could not fetch career insights. Please try again.");
+        return;
+      }
       setInsights(data);
     } catch (err) {
       console.error(err);
