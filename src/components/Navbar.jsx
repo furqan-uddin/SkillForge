@@ -66,9 +66,7 @@ const Navbar = () => {
       { to: "/register", name: "Register", icon: <UserPlus size={16} /> },
     ];
 
-    return isAuthenticated
-      ? [...commonLinks, ...authLinks]
-      : [...commonLinks, ...guestLinks];
+    return isAuthenticated ? [...commonLinks, ...authLinks] : [...commonLinks, ...guestLinks];
   };
 
   const navLinks = getNavLinks();
@@ -93,9 +91,9 @@ const Navbar = () => {
 
       <div className="hidden md:flex items-center space-x-2">
         {navLinks.map((link) => (
-          <Link key={link.to} to={link.to} className={navLinkClass(link.to)}>
+          <Link key={link.to} to={link.to} className={`${navLinkClass(link.to)} max-w-[150px] truncate`}>
             {link.icon}
-            <span className="truncate max-w-[120px]">{link.name}</span>
+            <span className="truncate">{link.name}</span>
           </Link>
         ))}
       </div>
@@ -105,13 +103,10 @@ const Navbar = () => {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex max-w-[150px] sm:max-w-[200px] items-center gap-1 sm:gap-2 bg-blue-600 text-white dark:bg-blue-500 px-2 sm:px-3 py-1.5 rounded-lg hover:shadow-lg transition transform hover:scale-105"
+              className="flex max-w-[160px] sm:max-w-[200px] items-center gap-1 sm:gap-2 bg-blue-600 text-white dark:bg-blue-500 px-2 sm:px-3 py-1.5 rounded-lg hover:shadow-lg transition transform hover:scale-105"
             >
               <User className="w-4 h-4 text-white flex-shrink-0" />
-              <span
-                className="text-sm font-medium truncate max-w-[80px] sm:max-w-[120px]"
-                title={user?.name || "User"}
-              >
+              <span className="text-xs sm:text-sm font-medium truncate" title={user?.name || "User"}>
                 {user?.name || "User"}
               </span>
               <ChevronDown
@@ -152,11 +147,7 @@ const Navbar = () => {
           className="md:hidden p-2 rounded-md transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? (
-            <X className="text-black dark:text-white" />
-          ) : (
-            <Menu className="text-black dark:text-white" />
-          )}
+          {isOpen ? <X className="text-black dark:text-white" /> : <Menu className="text-black dark:text-white" />}
         </button>
       </div>
 
