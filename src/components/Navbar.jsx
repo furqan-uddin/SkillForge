@@ -52,7 +52,7 @@ const Navbar = () => {
     }`;
 
   const getNavLinks = () => {
-    const commonLinks = [{ to: "/", name: "Home", icon: <House size={16} />  }];
+    const commonLinks = [{ to: "/", name: "Home", icon: <House size={16} /> }];
 
     const authLinks = [
       { to: "/dashboard", name: "Dashboard", icon: <LayoutDashboard size={16} /> },
@@ -73,7 +73,6 @@ const Navbar = () => {
 
   const navLinks = getNavLinks();
 
-  // mobile menu close handler
   const handleMobileLinkClick = () => {
     setIsOpen(false);
   };
@@ -83,40 +82,40 @@ const Navbar = () => {
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="flex items-center justify-between px-6 py-4 bg-white/90 dark:bg-gray-900 shadow-lg backdrop-blur-md sticky top-0 z-50"
+      className="flex items-center justify-between px-4 sm:px-6 py-4 bg-white/90 dark:bg-gray-900 shadow-lg backdrop-blur-md sticky top-0 z-50"
     >
-      {/* Logo */}
       <div
         onClick={() => navigate("/")}
-        className="text-2xl font-extrabold text-blue-600 cursor-pointer hover:scale-105 transition-transform"
+        className="text-xl sm:text-2xl font-extrabold text-blue-600 cursor-pointer hover:scale-105 transition-transform"
       >
         SkillForge
       </div>
 
-      {/* Desktop Nav */}
       <div className="hidden md:flex items-center space-x-2">
         {navLinks.map((link) => (
           <Link key={link.to} to={link.to} className={navLinkClass(link.to)}>
             {link.icon}
-            <span>{link.name}</span>
+            <span className="truncate max-w-[120px]">{link.name}</span>
           </Link>
         ))}
       </div>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {isAuthenticated && (
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 bg-blue-600 text-white dark:bg-blue-500 px-3 py-1.5 rounded-lg hover:shadow-lg transition transform hover:scale-105"
+              className="flex max-w-[150px] sm:max-w-[200px] items-center gap-1 sm:gap-2 bg-blue-600 text-white dark:bg-blue-500 px-2 sm:px-3 py-1.5 rounded-lg hover:shadow-lg transition transform hover:scale-105"
             >
-              <User className="w-4 h-4 text-white" />
-              <span className="text-sm font-medium">
+              <User className="w-4 h-4 text-white flex-shrink-0" />
+              <span
+                className="text-sm font-medium truncate max-w-[80px] sm:max-w-[120px]"
+                title={user?.name || "User"}
+              >
                 {user?.name || "User"}
               </span>
               <ChevronDown
-                className={`w-4 h-4 text-white transition-transform ${
+                className={`w-4 h-4 text-white flex-shrink-0 transition-transform ${
                   dropdownOpen ? "rotate-180" : "rotate-0"
                 }`}
               />
@@ -149,7 +148,6 @@ const Navbar = () => {
           </div>
         )}
         <ThemeToggle />
-        {/* Mobile Menu Button */}
         <button
           className="md:hidden p-2 rounded-md transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
           onClick={() => setIsOpen(!isOpen)}
@@ -162,7 +160,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile Nav */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -170,17 +167,17 @@ const Navbar = () => {
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ duration: 0.3 }}
-            className="absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-lg md:hidden flex flex-col space-y-4 p-4 z-40"
+            className="absolute top-16 left-0 w-full bg-white dark:bg-gray-900 shadow-lg md:hidden flex flex-col space-y-2 p-4 z-40"
           >
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={handleMobileLinkClick}
-                className={navLinkClass(link.to)}
+                className={`${navLinkClass(link.to)} w-full truncate`}
               >
                 {link.icon}
-                <span>{link.name}</span>
+                <span className="truncate">{link.name}</span>
               </Link>
             ))}
           </motion.div>
