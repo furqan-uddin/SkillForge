@@ -119,10 +119,9 @@ The frontend communicates with backend through axiosInstance.js.
 baseURL: import.meta.env.VITE_API_BASE_URL
 
 ---
-## 🙌 Author
 
-Mohammad Furqanuddin
+## 🧑‍💻 Author
 
-🔗 LinkedIn: https://www.linkedin.com/in/mohammadfurqanuddin
-
+**Mohammad Furqanuddin**  
+🔗 LinkedIn: https://www.linkedin.com/in/mohammadfurqanuddin  
 📧 Email: mohammedfurqan2108@gmail.com
